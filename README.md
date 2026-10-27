@@ -36,16 +36,32 @@ their status; moderators change `status` (`pending` → `in_progress` → `resol
 | Command             | Description                                   |
 | ------------------- | --------------------------------------------- |
 | `npm run dev`       | Development server with hot reload            |
-| `npm run build`     | Type-check and build for production (`dist/`) |
+| `npm run build`     | Type-check and build for production (`dist/nattandiya/`) |
 | `npm run preview`   | Serve the production build locally            |
 | `npm run typecheck` | TypeScript only                               |
 | `npm run lint`      | Oxlint                                        |
 
 ## Deployment
 
-`npm run build` produces a static site in `dist/` that expects to be served from **`/nattandiya/`**
-(e.g. `https://example.org/nattandiya/`). To serve from a domain root instead, build with
-`BASE_PATH=/ npm run build`. Set the `VITE_*` variables in your host's build environment.
+The app is served from **`/nattandiya/`** (e.g. `https://example.org/nattandiya/`).
+
+### Vercel
+
+`vercel.json` is included. Import the repository in Vercel. The framework (Vite), build command and
+output directory are already set in the file. Add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`
+under **Settings → Environment Variables**, then deploy. The config:
+
+- redirects `/` to `/nattandiya/` (307, temporary) and `/nattandiya` to `/nattandiya/`
+- serves the app's files from `/nattandiya/…` and sends every other `/nattandiya/*` path to `index.html`
+- caches the content-hashed files in `/nattandiya/assets/` for a year
+
+### Other static hosts
+
+`npm run build` writes the site to `dist/nattandiya/`, so serving `dist/` as the web root puts the
+app at `/nattandiya/` with no extra rules. Add a fallback to `/nattandiya/index.html` if the host
+needs SPA routing. To serve from a domain root instead, build with `BASE_PATH=/` (output goes
+straight to `dist/`; on Vercel, update `vercel.json` as well).
+
 For heavy traffic, switch to a tile provider instead of the public OpenStreetMap tile servers.
 
 ## Project docs

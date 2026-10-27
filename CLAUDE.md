@@ -12,10 +12,10 @@ Node ≥ 20.19 (Vite 8). Install with `npm install`.
 | Command             | What it does                                                       |
 | ------------------- | ------------------------------------------------------------------ |
 | `npm run dev`       | Dev server → **http://localhost:5173/nattandiya/** (note the base path) |
-| `npm run build`     | `tsc -b` type-check + production build into `dist/`               |
+| `npm run build`     | `tsc -b` type-check + production build into `dist/nattandiya/`    |
 | `npm run typecheck` | Type-check only                                                    |
 | `npm run lint`      | Oxlint (react, react-hooks, jsx-a11y, typescript rules)           |
-| `npm run preview`   | Serve `dist/` → http://localhost:4173/nattandiya/                 |
+| `npm run preview`   | Serve the build → http://localhost:4173/nattandiya/               |
 
 Before finishing any change: `npm run typecheck && npm run lint && npm run build` must be clean
 (zero warnings). There is no automated test suite yet — see PROGRESS.md for how the app was verified.
@@ -60,6 +60,7 @@ src/
   components/toast/        ToastProvider, Toaster, contexts + hooks
 supabase/migrations/       Schema, constraints, RLS + grants (source of truth for the DB)
 supabase/seed.sql          Sample rows for LOCAL development only
+vercel.json                Vercel: / → /nattandiya/ redirect, SPA fallback, asset caching (ADR-021)
 ```
 
 ## Conventions
@@ -102,4 +103,8 @@ supabase/seed.sql          Sample rows for LOCAL development only
 - A native modal `<dialog>` sits in the top layer above everything, including toasts — show
   errors that happen while the form is open inline in the form.
 - Leaflet only watches window resizes; a `ResizeObserver` calls `invalidateSize()` for layout changes.
+- The build output mirrors the URL (`dist/nattandiya/…`, from `outDir = dist + base`), and
+  `vercel.json` hard-codes `/nattandiya/`. Changing `BASE_PATH` means updating `vercel.json` too.
+- `import.meta.env.VITE_*` is inlined at build time: without Supabase env vars the bundler drops
+  `@supabase/supabase-js` entirely (~423 kB bundle); with them it is ~638 kB (Vite's > 500 kB warning).
 - zsh: never name a shell variable `path` (it is tied to `$PATH`).

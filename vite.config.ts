@@ -14,9 +14,15 @@ function normalizeBasePath(value: string): string {
 export default defineConfig(({ mode }) => {
   // '' prefix: read BASE_PATH from the shell or any .env file (it is never exposed to the client).
   const env = loadEnv(mode, process.cwd(), '')
+  const base = normalizeBasePath(env.BASE_PATH ?? DEFAULT_BASE_PATH)
 
   return {
-    base: normalizeBasePath(env.BASE_PATH ?? DEFAULT_BASE_PATH),
+    base,
+    build: {
+      // Mirror the URL path on disk (dist/nattandiya/…), so a host can serve dist/ as its web root
+      // and every file resolves without prefix-stripping rewrites — see vercel.json.
+      outDir: `dist${base}`.replace(/\/$/, ''),
+    },
     plugins: [react()],
   }
 })

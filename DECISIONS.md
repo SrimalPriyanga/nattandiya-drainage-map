@@ -132,3 +132,19 @@ the next visit instead of disappearing forever.
 Dictionary completeness is enforced by the type system. Behaviour was verified with throwaway
 harnesses (SQL checks on PGlite; Playwright against a mock PostgREST — see PROGRESS.md). Adding
 Vitest and Playwright to the repo is the top item in "Next".
+
+### ADR-021 · Vercel routing; build output mirrors the URL path (2026-10-27)
+The build writes to `dist/nattandiya/` (`outDir = dist + base`), so with `dist/` as the web root
+every file already lives at its public URL. That means no prefix-stripping rewrites, and any static
+host behaves the same way. `vercel.json` then needs only:
+- a **temporary** (307) redirect `/` → `/nattandiya/`, so the app could later move to the root
+  without browsers having cached the redirect;
+- a permanent `/nattandiya` → `/nattandiya/`;
+- an SPA fallback `/nattandiya/((?!assets/).*)` → `/nattandiya/index.html`.
+
+Vercel checks the filesystem before applying rewrites, so real files are served directly.
+`assets/` is excluded from the fallback so a stale hashed chunk returns 404 instead of HTML, which
+would otherwise fail with a MIME-type error. Hashed assets get
+`Cache-Control: public, max-age=31536000, immutable`. Verified by compiling the file with
+`@vercel/routing-utils` and simulating requests against `dist/`. `vercel.json` hard-codes
+`/nattandiya/`, so change it together with `BASE_PATH`.

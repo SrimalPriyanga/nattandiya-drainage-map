@@ -4,8 +4,8 @@ _Last updated: 2026-10-27_
 
 ## Status
 
-The MVP is feature-complete and verified locally. It has **not** been connected to a real
-Supabase project or deployed yet.
+The MVP is feature-complete and verified locally, and a Vercel deployment config is in place.
+A live deployment against a real Supabase project has not been verified yet.
 
 ## Done
 
@@ -20,7 +20,9 @@ Supabase project or deployed yet.
 - [x] Existing reports fetched (paged) and shown as category-coloured pins with localized popups
 - [x] Legend with per-category counts; loading/error states with retry
 - [x] Mobile-first layout (bottom-sheet form, safe areas, 16 px inputs) and keyboard/screen-reader support
-- [x] `base: '/nattandiya/'` (overridable with `BASE_PATH`)
+- [x] `base: '/nattandiya/'` (overridable with `BASE_PATH`); build output mirrors it (`dist/nattandiya/`)
+- [x] `vercel.json`: `/` → `/nattandiya/` redirect, SPA fallback, immutable caching for hashed assets
+      (verified with `@vercel/routing-utils` + simulated requests, 10/10 checks)
 - [x] Docs: CLAUDE.md, DECISIONS.md, README.md, this file
 
 ## Verification performed (2026-10-27)
@@ -47,6 +49,8 @@ Supabase project or deployed yet.
   sites. **Have a native Sinhala and Tamil speaker review `si.ts` / `ta.ts`.**
 - Standard OSM tiles are fine for light use only (ADR-003).
 - No marker clustering; all reports render as individual markers.
+- With Supabase configured the JS bundle is ~638 kB (~185 kB gzip), because `@supabase/supabase-js`
+  is included; Vite prints its "chunk larger than 500 kB" warning (not an error).
 - No moderation UI; status changes require the Supabase dashboard / service role.
 
 ## Next
@@ -55,6 +59,9 @@ Supabase project or deployed yet.
    with a mock Supabase) to the repo, and add a CI workflow.
 2. Turnstile + Supabase Edge Function for verified, rate-limited inserts; then revoke anon insert.
 3. Native-speaker translation review.
-4. Connect a real Supabase project, apply the migration, deploy under `/nattandiya/`.
-5. Nice-to-haves: "use my location" button, photo uploads (Storage), Supabase Realtime for live
+4. Apply the migration to the real Supabase project, deploy to Vercel (`vercel.json` is ready) and
+   check the live routes: `/` → `/nattandiya/`, deep links, assets.
+5. Shrink the bundle: lazy-load the Supabase client (the map can render before it arrives) and/or
+   split vendor chunks.
+6. Nice-to-haves: "use my location" button, photo uploads (Storage), Supabase Realtime for live
    pins, marker clustering, category filter, moderator status updates, PWA/offline.
