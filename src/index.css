@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  #root {
+    /* 100vh fallback for browsers without dynamic viewport units. */
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  body {
+    @apply bg-slate-100 text-slate-900 antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* ---------------------------------------------------------------- Leaflet overrides */
+
+/* Leaflet hard-codes Helvetica/Arial, which have no Sinhala or Tamil glyphs. */
+.leaflet-container {
+  font-family: inherit;
+}
+
+.leaflet-container:focus-visible {
+  outline: 3px solid theme('colors.sky.500');
+  outline-offset: -3px;
+}
+
+/* Crosshair while the map has keyboard focus: pressing Enter reports at this point. */
+.leaflet-container:focus-visible::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1000;
+  width: 28px;
+  height: 28px;
+  margin: -14px 0 0 -14px;
+  pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Cg fill='none' stroke-linecap='round'%3E%3Cpath d='M14 2v8M14 18v8M2 14h8M18 14h8' stroke='%23fff' stroke-width='5'/%3E%3Cpath d='M14 2v8M14 18v8M2 14h8M18 14h8' stroke='%230369a1' stroke-width='2.5'/%3E%3C/g%3E%3Ccircle cx='14' cy='14' r='2.5' fill='%230369a1' stroke='%23fff' stroke-width='1.5'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 0.75rem;
+}
+
+.leaflet-popup-content {
+  margin: 14px 16px;
+  font-size: 0.875rem;
+  /* Sinhala and Tamil vowel signs sit above and below the line — give them room. */
+  line-height: 1.5;
+}
+
+.leaflet-popup-content p {
+  margin: 0;
+}
+
+.leaflet-container a.leaflet-popup-close-button {
+  width: 32px;
+  height: 32px;
+  font-size: 20px;
+  line-height: 30px;
+}
+
+/* ---------------------------------------------------------------- Report markers */
+
+.ndm-marker {
+  background: none;
+  border: 0;
+}
+
+.ndm-marker svg {
+  display: block;
+  overflow: visible;
+  filter: drop-shadow(0 1px 1.5px rgb(15 23 42 / 0.45));
+}
+
+.ndm-marker:focus-visible {
+  outline: 3px solid theme('colors.sky.500');
+  outline-offset: 2px;
+  border-radius: 0.5rem;
+}
+
+.ndm-marker__pulse {
+  position: absolute;
+  bottom: -11px;
+  left: 50%;
+  width: 24px;
+  height: 24px;
+  margin-left: -12px;
+  border-radius: 9999px;
+  background: rgb(5 150 105 / 0.45);
+  animation: ndm-pulse 1.6s ease-out infinite;
+}
+
+@keyframes ndm-pulse {
+  from {
+    transform: scale(0.3);
+    opacity: 1;
+  }
+  to {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ndm-marker__pulse {
+    animation: none;
+    opacity: 0.6;
+  }
+}
