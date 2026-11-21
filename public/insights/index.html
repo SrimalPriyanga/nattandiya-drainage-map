@@ -91,10 +91,9 @@
   ====================================================================== -->
   <header class="sticky top-0 z-40 safe-top bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm">
     <div class="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 py-2.5 sm:py-3">
-      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2.5 sm:gap-3">
-
-        <!-- Brand & Spreadsheet Source Badge (Full width on mobile so SI/TA/EN titles never cramp) -->
-        <div class="flex items-start sm:items-center gap-3 min-w-0">
+      <!-- Row 1: Brand / Title (Left) + Language Switcher & Theme Toggle (Fixed Top-Right) -->
+      <div class="flex items-start sm:items-center justify-between gap-3">
+        <div class="flex items-start sm:items-center gap-3 min-w-0 flex-1">
           <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white flex items-center justify-center shadow-md shadow-emerald-600/20 shrink-0 mt-0.5 sm:mt-0">
             <!-- Community Network SVG Icon -->
             <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -102,11 +101,11 @@
             </svg>
           </div>
           <div class="min-w-0 flex-1">
-            <div class="flex items-center gap-2 flex-wrap">
-              <h1 id="hdr-title" class="text-sm sm:text-lg font-extrabold tracking-tight text-slate-900 dark:text-white leading-snug">
+            <div class="flex items-center gap-2 flex-wrap lg:flex-nowrap">
+              <h1 id="hdr-title" class="text-sm sm:text-base lg:text-[17px] font-extrabold tracking-tight text-slate-900 dark:text-white leading-snug lg:truncate">
                 නාත්තන්ඩිය ප්‍රජා දත්ත විශ්ලේෂණ පුවරුව
               </h1>
-              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300 shrink-0">
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300 shrink-0 whitespace-nowrap">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                 <span id="hdr-live-badge">සජීවී වාර්තාව</span>
               </span>
@@ -117,38 +116,7 @@
           </div>
         </div>
 
-        <!-- Mobile Full-Width Trilingual Switcher (Easy one-thumb tap on iOS & Android) -->
-        <div class="grid grid-cols-3 lg:hidden rounded-xl bg-slate-100 dark:bg-slate-800 p-1 border border-slate-200 dark:border-slate-700 w-full" role="group" aria-label="Mobile Language Switcher">
-          <button type="button" onclick="setLanguage('si')" id="btn-lang-si-mobile" class="min-h-[38px] px-2 py-1.5 rounded-lg text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm text-center">
-            සිංහල
-          </button>
-          <button type="button" onclick="setLanguage('ta')" id="btn-lang-ta-mobile" class="min-h-[38px] px-2 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 text-center">
-            தமிழ்
-          </button>
-          <button type="button" onclick="setLanguage('en')" id="btn-lang-en-mobile" class="min-h-[38px] px-2 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 text-center">
-            English
-          </button>
-        </div>
-
-        <!-- Right Controls: Date Filter, Desktop Language Toggle, Share Summary, Dark Mode -->
-        <div class="flex flex-wrap items-center justify-between lg:justify-end gap-2">
-
-          <!-- Date Window Selector (Horizontal scroll-safe on 360px screens) -->
-          <div class="inline-flex items-center rounded-xl bg-slate-100 dark:bg-slate-800 p-1 border border-slate-200 dark:border-slate-700 overflow-x-auto no-scrollbar max-w-full flex-1 sm:flex-initial">
-            <button type="button" onclick="setDateRange('all')" data-range="all" class="range-btn min-h-[36px] px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm whitespace-nowrap">
-              <span data-i18n="rangeAll">දින 60 (සියල්ල)</span>
-            </button>
-            <button type="button" onclick="setDateRange('30')" data-range="30" class="range-btn min-h-[36px] px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 whitespace-nowrap">
-              <span data-i18n="range30">අවසන් දින 30</span>
-            </button>
-            <button type="button" onclick="setDateRange('14')" data-range="14" class="range-btn min-h-[36px] px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 whitespace-nowrap">
-              <span data-i18n="range14">අවසන් දින 14</span>
-            </button>
-            <button type="button" onclick="setDateRange('7')" data-range="7" class="range-btn min-h-[36px] px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 whitespace-nowrap">
-              <span data-i18n="range7">අවසන් දින 7</span>
-            </button>
-          </div>
-
+        <div class="flex items-center gap-2 shrink-0">
           <!-- Desktop Language Switcher (Sinhala Primary | Tamil | English) -->
           <div class="hidden lg:inline-flex items-center rounded-xl bg-slate-100 dark:bg-slate-800 p-1 border border-slate-200 dark:border-slate-700" role="group" aria-label="Language Switcher">
             <button type="button" onclick="setLanguage('si')" id="btn-lang-si" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm">
@@ -162,25 +130,54 @@
             </button>
           </div>
 
-          <!-- Action Cluster: Share Summary + Theme Toggle -->
-          <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
-            <button type="button" onclick="copyTeamSummary()" class="flex-1 sm:flex-initial justify-center min-h-[38px] inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-slate-900 dark:bg-emerald-600 text-white hover:bg-slate-800 dark:hover:bg-emerald-500 transition shadow-sm">
-              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-              </svg>
-              <span data-i18n="shareBtn">කණ්ඩායමට බෙදාගන්න</span>
-            </button>
-
-            <button type="button" onclick="toggleTheme()" id="theme-toggle" class="min-h-[38px] min-w-[38px] flex items-center justify-center p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition shrink-0" title="Toggle Theme">
-              <svg id="icon-moon" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
-              </svg>
-              <svg id="icon-sun" class="w-4 h-4 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
-              </svg>
-            </button>
-          </div>
+          <button type="button" onclick="toggleTheme()" id="theme-toggle" class="min-h-[38px] min-w-[38px] flex items-center justify-center p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition shrink-0" title="Toggle Theme">
+            <svg id="icon-moon" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+            </svg>
+            <svg id="icon-sun" class="w-4 h-4 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+            </svg>
+          </button>
         </div>
+      </div>
+
+      <!-- Mobile Full-Width Trilingual Switcher (Easy one-thumb tap on iOS & Android) -->
+      <div class="grid grid-cols-3 lg:hidden rounded-xl bg-slate-100 dark:bg-slate-800 p-1 border border-slate-200 dark:border-slate-700 w-full mt-2" role="group" aria-label="Mobile Language Switcher">
+        <button type="button" onclick="setLanguage('si')" id="btn-lang-si-mobile" class="min-h-[38px] px-2 py-1.5 rounded-lg text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm text-center">
+          සිංහල
+        </button>
+        <button type="button" onclick="setLanguage('ta')" id="btn-lang-ta-mobile" class="min-h-[38px] px-2 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 text-center">
+          தமிழ்
+        </button>
+        <button type="button" onclick="setLanguage('en')" id="btn-lang-en-mobile" class="min-h-[38px] px-2 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 text-center">
+          English
+        </button>
+      </div>
+
+      <!-- Row 2: Date Window Selector (Left) + Share Summary (Right) -->
+      <div class="mt-2 pt-2 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <!-- Date Window Selector (Horizontal scroll-safe on 360px screens) -->
+        <div class="inline-flex items-center rounded-xl bg-slate-100 dark:bg-slate-800 p-1 border border-slate-200 dark:border-slate-700 overflow-x-auto no-scrollbar max-w-full sm:w-auto">
+          <button type="button" onclick="setDateRange('all')" data-range="all" class="range-btn min-h-[36px] px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm whitespace-nowrap">
+            <span data-i18n="rangeAll">දින 60 (සියල්ල)</span>
+          </button>
+          <button type="button" onclick="setDateRange('30')" data-range="30" class="range-btn min-h-[36px] px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 whitespace-nowrap">
+            <span data-i18n="range30">අවසන් දින 30</span>
+          </button>
+          <button type="button" onclick="setDateRange('14')" data-range="14" class="range-btn min-h-[36px] px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 whitespace-nowrap">
+            <span data-i18n="range14">අවසන් දින 14</span>
+          </button>
+          <button type="button" onclick="setDateRange('7')" data-range="7" class="range-btn min-h-[36px] px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 whitespace-nowrap">
+            <span data-i18n="range7">අවසන් දින 7</span>
+          </button>
+        </div>
+
+        <button type="button" onclick="copyTeamSummary()" class="w-full sm:w-auto justify-center min-h-[38px] inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-900 dark:bg-emerald-600 text-white hover:bg-slate-800 dark:hover:bg-emerald-500 transition shadow-sm shrink-0 whitespace-nowrap">
+          <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+          </svg>
+          <span data-i18n="shareBtn">කණ්ඩායමට බෙදාගන්න</span>
+        </button>
       </div>
     </div>
   </header>
@@ -189,137 +186,9 @@
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
     <!-- =====================================================================
-         SECTION 1: EXECUTIVE INSIGHTS AT THE TOP OF HOME PAGE
-         Provides actionable, data-backed strategic insights for the Nattandiya
-         Community Team (Admins & Moderators) in Sinhala & English.
-    ====================================================================== -->
-    <section aria-labelledby="insights-heading" class="rounded-2xl bg-gradient-to-br from-emerald-950 via-teal-900 to-slate-900 text-white p-5 sm:p-7 shadow-xl border border-emerald-800/40 relative overflow-hidden">
-      <!-- Decorative Background Glow -->
-      <div class="absolute -top-24 -right-24 w-72 h-72 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
-      <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-amber-400/10 rounded-full blur-3xl pointer-events-none"></div>
-
-      <div class="relative z-10">
-        <!-- Insights Section Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-4 border-b border-white/10">
-          <div>
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/15 border border-amber-300/30 text-amber-300 text-xs font-bold mb-2">
-              <span>🌻</span>
-              <span data-i18n="insightBadge">ප්‍රධාන විශ්ලේෂණාත්මක තීක්ෂ්ණ බුද්ධිය • Executive Insights</span>
-            </div>
-            <h2 id="insights-heading" class="text-xl sm:text-2xl font-extrabold tracking-tight text-white" data-i18n="insightTitle">
-              නාත්තන්ඩිය ප්‍රජාවේ දත්ත විශ්ලේෂණය සහ කණ්ඩායමට වැදගත් නිගමන
-            </h2>
-          </div>
-          <div class="text-xs text-emerald-200/90 bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 max-w-xs">
-            <span class="font-bold text-amber-300 block" data-i18n="insightPeriodLabel">විශ්ලේෂණ කාලසීමාව:</span>
-            <span id="insight-dynamic-period" class="num-tabular">2026-09-21 → 2026-11-19 (දින 60)</span>
-          </div>
-        </div>
-
-        <!-- 4 Data-Backed Insight Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mt-5">
-
-          <!-- Insight 1: Mid-November Viral Reach Explosion -->
-          <div class="rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 p-4 flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-bold uppercase tracking-wider text-emerald-300" data-i18n="ins1Tag">🚀 ව්‍යාප්තියේ දැවැන්ත වර්ධනය</span>
-                <span class="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-200 text-xs font-bold num-tabular">+404%</span>
-              </div>
-              <h3 class="text-base font-bold text-white mb-1.5" data-i18n="ins1Title">
-                නොවැම්බර් 16–19 නැරඹුම් වාර්තා බිඳ හෙළයි
-              </h3>
-              <p class="text-xs text-slate-200 leading-relaxed" data-i18n="ins1Body">
-                දිනකට සාමාන්‍යයෙන් 16,600ක් වූ නැරඹුම් (Views), නොවැම්බර් 16 දින <strong>83,914</strong> දක්වාද නොවැම්බර් 19 දින <strong>75,612</strong> දක්වාද ඉහළ ගොස් ඇත. මෙය ප්‍රජාව වෙත අලුත් සාමාජිකයින් ගලා ඒමට (නොවැ. 16: 87 දෙනෙක්) සෘජුවම බලපා ඇත.
-              </p>
-            </div>
-            <div class="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] text-emerald-200">
-              <span data-i18n="ins1FootLabel">උපරිම නැරඹුම් දිනය:</span>
-              <span class="font-bold num-tabular">2026-11-16 (83,914)</span>
-            </div>
-          </div>
-
-          <!-- Insight 2: Content Supply vs Discussion Waves -->
-          <div class="rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 p-4 flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-bold uppercase tracking-wider text-amber-300" data-i18n="ins2Tag">💬 සංවාද සහ ප්‍රතිචාර රැල්ල</span>
-                <span class="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-200 text-xs font-bold num-tabular">~376/දිනකට</span>
-              </div>
-              <h3 class="text-base font-bold text-white mb-1.5" data-i18n="ins2Title">
-                ස්ථාවර පෝස්ට් ප්‍රමාණයක් සහ ඉහළ ප්‍රතිචාර
-              </h3>
-              <p class="text-xs text-slate-200 leading-relaxed" data-i18n="ins2Body">
-                දින 60 තුළ පෝස්ට් <strong>22,584</strong>ක් පළ වී ඇත (ඔක්. 7 උපරිමය: පෝස්ට් 582). විශේෂයෙන් ඔක්තෝබර් 25 (ප්‍රතිචාර 1,884) සහ සැප්තැම්බර් 26 (කමෙන්ට් 687) වැනි දිනවල ප්‍රජාව ඉතා උද්යෝගයෙන් සංවාදවලට එක්වී ඇත.
-              </p>
-            </div>
-            <div class="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] text-amber-200">
-              <span data-i18n="ins2FootLabel">වැඩිම ප්‍රතිචාර දිනය:</span>
-              <span class="font-bold num-tabular">2026-10-25 (1,884)</span>
-            </div>
-          </div>
-
-          <!-- Insight 3: Passive Viewer to WhatsApp Hub Funnel -->
-          <div class="rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 p-4 flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-bold uppercase tracking-wider text-sky-300" data-i18n="ins3Tag">🎯 Smart City උපායමාර්ගය</span>
-                <span class="px-2 py-0.5 rounded-md bg-sky-500/20 text-sky-200 text-xs font-bold num-tabular">98.8% Readers</span>
-              </div>
-              <h3 class="text-base font-bold text-white mb-1.5" data-i18n="ins3Title">
-                නිහඬ පාඨකයින් WhatsApp ජාලයට යොමු කිරීම
-              </h3>
-              <p class="text-xs text-slate-200 leading-relaxed" data-i18n="ins3Body">
-                දිනකට සාමාන්‍යයෙන් <strong>20,400+</strong> පිරිසක් පෝස්ට් කියවුවද, පෝස්ට් හෝ කමෙන්ට් කරන්නේ <strong>245</strong>ක් පමණි. එනම් 98%කට වඩා සිටින්නේ තොරතුරු සොයන පාඨකයින්ය. ඔවුන්ව අදාළ WhatsApp Hubs වෙත යොමු කිරීමෙන් ඉක්මන් විසඳුම් ලැබේ.
-              </p>
-            </div>
-            <div class="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] text-sky-200">
-              <span data-i18n="ins3FootLabel">උපරිම සක්‍රීය දායකයින්:</span>
-              <span class="font-bold num-tabular">2026-10-21 (447)</span>
-            </div>
-          </div>
-
-          <!-- Insight 4: 2026 Yearly Growth Trajectory -->
-          <div class="rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 p-4 flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-bold uppercase tracking-wider text-purple-300" data-i18n="ins4Tag">📈 වසරේ සමස්ත ප්‍රගතිය</span>
-                <span class="px-2 py-0.5 rounded-md bg-purple-500/20 text-purple-200 text-xs font-bold num-tabular">4.5x වර්ධනයක්</span>
-              </div>
-              <h3 class="text-base font-bold text-white mb-1.5" data-i18n="ins4Title">
-                2026 ජනවාරි මසට සාපේක්ෂව 450%ක පිම්මක්
-              </h3>
-              <p class="text-xs text-slate-200 leading-relaxed" data-i18n="ins4Body">
-                2026 ජනවාරි මාසයේ දිනකට පෝස්ට් ~83ක් සහ නැරඹුම් ~9,500ක් වූ අපගේ සමූහය, මේ වන විට දිනකට පෝස්ට් <strong>376</strong>ක් සහ නැරඹුම් <strong>83,914</strong> දක්වා වර්ධනය වී නාත්තන්ඩියේ ප්‍රධානතම ඩිජිටල් චතුරශ්‍රය බවට පත්ව ඇත.
-              </p>
-            </div>
-            <div class="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] text-purple-200">
-              <span data-i18n="ins4FootLabel">දින 60 නව සාමාජිකයින්:</span>
-              <span class="font-bold num-tabular">+2,621</span>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- Actionable Team Recommendation Strip -->
-        <div class="mt-4 rounded-xl bg-emerald-900/60 border border-emerald-400/25 px-4 py-3 flex flex-col md:flex-row md:items-center justify-between gap-3">
-          <div class="flex items-start sm:items-center gap-2.5">
-            <span class="text-lg shrink-0">💡</span>
-            <p class="text-xs sm:text-sm text-emerald-50 leading-relaxed" data-i18n="teamActionNote">
-              <strong>Admin කණ්ඩායමට උපදෙස:</strong> නැරඹුම් සහ සාමාජිකයින් එකතු වීම වැඩිම <strong>සඳුදා, සිකුරාදා සහ සති අන්ත දිනවල</strong> පෝස්ට් අනුමත කිරීම වේගවත් කර, Market, Services සහ Jobs සඳහා අදාළ WhatsApp Hub ලින්ක් පළමු කමෙන්ට් එක ලෙස යොමු කරන්න.
-            </p>
-          </div>
-          <button type="button" onclick="scrollToSection('tab-navigation')" class="shrink-0 self-start md:self-center px-3 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 text-xs font-bold text-white transition">
-            <span data-i18n="exploreTabsBtn">වගු පටිති බලන්න ↓</span>
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- =====================================================================
-         SECTION 2: DYNAMIC KPI SUMMARY CARDS (6 METRICS)
+         SECTION 1: DYNAMIC KPI SUMMARY CARDS (6 METRICS) AT TOP OF PAGE
          Automatically updates when the user toggles date ranges (60d/30d/14d/7d)
-         or switches between Sinhala and English.
+         or switches between Sinhala, Tamil, and English.
     ====================================================================== -->
     <section aria-label="Key Performance Indicators" class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3.5">
 
@@ -401,6 +270,134 @@
         </div>
       </div>
 
+    </section>
+
+    <!-- =====================================================================
+         SECTION 2: EXECUTIVE INSIGHTS
+         Provides actionable, data-backed strategic insights for the Nattandiya
+         Community Team (Admins & Moderators) in Sinhala, Tamil & English.
+    ====================================================================== -->
+    <section aria-labelledby="insights-heading" class="rounded-2xl bg-gradient-to-br from-emerald-950 via-teal-900 to-slate-900 text-white p-5 sm:p-7 shadow-xl border border-emerald-800/40 relative overflow-hidden">
+      <!-- Decorative Background Glow -->
+      <div class="absolute -top-24 -right-24 w-72 h-72 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-amber-400/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="relative z-10">
+        <!-- Insights Section Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-4 border-b border-white/10">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/15 border border-amber-300/30 text-amber-300 text-xs font-bold mb-2">
+              <span>🌻</span>
+              <span data-i18n="insightBadge">ප්‍රධාන විශ්ලේෂණාත්මක තීක්ෂ්ණ බුද්ධිය • Executive Insights</span>
+            </div>
+            <h2 id="insights-heading" class="text-xl sm:text-2xl font-extrabold tracking-tight text-white" data-i18n="insightTitle">
+              නාත්තන්ඩිය ප්‍රජාවේ දත්ත විශ්ලේෂණය සහ කණ්ඩායමට වැදගත් නිගමන
+            </h2>
+          </div>
+          <div class="text-xs text-emerald-200/90 bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 max-w-xs">
+            <span class="font-bold text-amber-300 block" data-i18n="insightPeriodLabel">විශ්ලේෂණ කාලසීමාව:</span>
+            <span id="insight-dynamic-period" class="num-tabular">2026-09-21 → 2026-11-19 (දින 60)</span>
+          </div>
+        </div>
+
+        <!-- 4 Data-Backed Insight Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mt-5">
+
+          <!-- Insight 1: Mid-November Viral Reach Explosion -->
+          <div class="rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 p-4 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-emerald-300" data-i18n="ins1Tag">🚀 ව්‍යාප්තියේ දැවැන්ත වර්ධනය</span>
+                <span class="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-200 text-xs font-bold num-tabular whitespace-nowrap shrink-0">+404%</span>
+              </div>
+              <h3 class="text-base font-bold text-white mb-1.5" data-i18n="ins1Title">
+                නොවැම්බර් 16–19 නැරඹුම් වාර්තා බිඳ හෙළයි
+              </h3>
+              <p class="text-xs text-slate-200 leading-relaxed" data-i18n="ins1Body">
+                දිනකට සාමාන්‍යයෙන් 16,600ක් වූ නැරඹුම් (Views), නොවැම්බර් 16 දින <strong>83,914</strong> දක්වාද නොවැම්බර් 19 දින <strong>75,612</strong> දක්වාද ඉහළ ගොස් ඇත. මෙය ප්‍රජාව වෙත අලුත් සාමාජිකයින් ගලා ඒමට (නොවැ. 16: 87 දෙනෙක්) සෘජුවම බලපා ඇත.
+              </p>
+            </div>
+            <div class="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] text-emerald-200">
+              <span data-i18n="ins1FootLabel">උපරිම නැරඹුම් දිනය:</span>
+              <span class="font-bold num-tabular">2026-11-16 (83,914)</span>
+            </div>
+          </div>
+
+          <!-- Insight 2: Content Supply vs Discussion Waves -->
+          <div class="rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 p-4 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-amber-300" data-i18n="ins2Tag">💬 සංවාද සහ ප්‍රතිචාර රැල්ල</span>
+                <span class="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-200 text-xs font-bold num-tabular whitespace-nowrap shrink-0" data-i18n="ins2Badge">~376/දිනකට</span>
+              </div>
+              <h3 class="text-base font-bold text-white mb-1.5" data-i18n="ins2Title">
+                ස්ථාවර පෝස්ට් ප්‍රමාණයක් සහ ඉහළ ප්‍රතිචාර
+              </h3>
+              <p class="text-xs text-slate-200 leading-relaxed" data-i18n="ins2Body">
+                දින 60 තුළ පෝස්ට් <strong>22,584</strong>ක් පළ වී ඇත (ඔක්. 7 උපරිමය: පෝස්ට් 582). විශේෂයෙන් ඔක්තෝබර් 25 (ප්‍රතිචාර 1,884) සහ සැප්තැම්බර් 26 (කමෙන්ට් 687) වැනි දිනවල ප්‍රජාව ඉතා උද්යෝගයෙන් සංවාදවලට එක්වී ඇත.
+              </p>
+            </div>
+            <div class="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] text-amber-200">
+              <span data-i18n="ins2FootLabel">වැඩිම ප්‍රතිචාර දිනය:</span>
+              <span class="font-bold num-tabular">2026-10-25 (1,884)</span>
+            </div>
+          </div>
+
+          <!-- Insight 3: Passive Viewer to WhatsApp Hub Funnel -->
+          <div class="rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 p-4 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-sky-300" data-i18n="ins3Tag">🎯 Smart City උපායමාර්ගය</span>
+                <span class="px-2 py-0.5 rounded-md bg-sky-500/20 text-sky-200 text-xs font-bold num-tabular whitespace-nowrap shrink-0" data-i18n="ins3Badge">98.8% පාඨකයින්</span>
+              </div>
+              <h3 class="text-base font-bold text-white mb-1.5" data-i18n="ins3Title">
+                නිහඬ පාඨකයින් WhatsApp ජාලයට යොමු කිරීම
+              </h3>
+              <p class="text-xs text-slate-200 leading-relaxed" data-i18n="ins3Body">
+                දිනකට සාමාන්‍යයෙන් <strong>20,400+</strong> පිරිසක් පෝස්ට් කියවුවද, පෝස්ට් හෝ කමෙන්ට් කරන්නේ <strong>245</strong>ක් පමණි. එනම් 98%කට වඩා සිටින්නේ තොරතුරු සොයන පාඨකයින්ය. ඔවුන්ව අදාළ WhatsApp Hubs වෙත යොමු කිරීමෙන් ඉක්මන් විසඳුම් ලැබේ.
+              </p>
+            </div>
+            <div class="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] text-sky-200">
+              <span data-i18n="ins3FootLabel">උපරිම සක්‍රීය දායකයින්:</span>
+              <span class="font-bold num-tabular">2026-10-21 (447)</span>
+            </div>
+          </div>
+
+          <!-- Insight 4: 2026 Yearly Growth Trajectory -->
+          <div class="rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 p-4 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-purple-300" data-i18n="ins4Tag">📈 වසරේ සමස්ත ප්‍රගතිය</span>
+                <span class="px-2 py-0.5 rounded-md bg-purple-500/20 text-purple-200 text-xs font-bold num-tabular whitespace-nowrap shrink-0" data-i18n="ins4Badge">4.5x වර්ධනයක්</span>
+              </div>
+              <h3 class="text-base font-bold text-white mb-1.5" data-i18n="ins4Title">
+                2026 ජනවාරි මසට සාපේක්ෂව 450%ක පිම්මක්
+              </h3>
+              <p class="text-xs text-slate-200 leading-relaxed" data-i18n="ins4Body">
+                2026 ජනවාරි මාසයේ දිනකට පෝස්ට් ~83ක් සහ නැරඹුම් ~9,500ක් වූ අපගේ සමූහය, මේ වන විට දිනකට පෝස්ට් <strong>376</strong>ක් සහ නැරඹුම් <strong>83,914</strong> දක්වා වර්ධනය වී නාත්තන්ඩියේ ප්‍රධානතම ඩිජිටල් චතුරශ්‍රය බවට පත්ව ඇත.
+              </p>
+            </div>
+            <div class="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] text-purple-200">
+              <span data-i18n="ins4FootLabel">දින 60 නව සාමාජිකයින්:</span>
+              <span class="font-bold num-tabular">+2,621</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Actionable Team Recommendation Strip -->
+        <div class="mt-4 rounded-xl bg-emerald-900/60 border border-emerald-400/25 px-4 py-3 flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div class="flex items-start sm:items-center gap-2.5">
+            <span class="text-lg shrink-0">💡</span>
+            <p class="text-xs sm:text-sm text-emerald-50 leading-relaxed" data-i18n="teamActionNote">
+              <strong>Admin කණ්ඩායමට උපදෙස:</strong> නැරඹුම් සහ සාමාජිකයින් එකතු වීම වැඩිම <strong>සඳුදා, සිකුරාදා සහ සති අන්ත දිනවල</strong> පෝස්ට් අනුමත කිරීම වේගවත් කර, Market, Services සහ Jobs සඳහා අදාළ WhatsApp Hub ලින්ක් පළමු කමෙන්ට් එක ලෙස යොමු කරන්න.
+            </p>
+          </div>
+          <button type="button" onclick="scrollToSection('tab-navigation')" class="shrink-0 self-start md:self-center px-3 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 text-xs font-bold text-white transition">
+            <span data-i18n="exploreTabsBtn">වගු පටිති බලන්න ↓</span>
+          </button>
+        </div>
+      </div>
     </section>
 
     <!-- =====================================================================
@@ -786,14 +783,17 @@
         ins1Body: "දිනකට සාමාන්‍යයෙන් 16,600ක් වූ නැරඹුම් (Views), නොවැම්බර් 16 දින <strong>83,914</strong> දක්වාද නොවැම්බර් 19 දින <strong>75,612</strong> දක්වාද ඉහළ ගොස් ඇත. මෙය ප්‍රජාව වෙත අලුත් සාමාජිකයින් ගලා ඒමට (නොවැ. 16: 87 දෙනෙක්) සෘජුවම බලපා ඇත.",
         ins1FootLabel: "උපරිම නැරඹුම් දිනය:",
         ins2Tag: "💬 සංවාද සහ ප්‍රතිචාර රැල්ල",
+        ins2Badge: "~376/දිනකට",
         ins2Title: "ස්ථාවර පෝස්ට් ප්‍රමාණයක් සහ ඉහළ ප්‍රතිචාර",
         ins2Body: "දින 60 තුළ පෝස්ට් <strong>22,584</strong>ක් පළ වී ඇත (ඔක්. 7 උපරිමය: පෝස්ට් 582). විශේෂයෙන් ඔක්තෝබර් 25 (ප්‍රතිචාර 1,884) සහ සැප්තැම්බර් 26 (කමෙන්ට් 687) වැනි දිනවල ප්‍රජාව ඉතා උද්යෝගයෙන් සංවාදවලට එක්වී ඇත.",
         ins2FootLabel: "වැඩිම ප්‍රතිචාර දිනය:",
         ins3Tag: "🎯 Smart City උපායමාර්ගය",
+        ins3Badge: "98.8% පාඨකයින්",
         ins3Title: "නිහඬ පාඨකයින් WhatsApp ජාලයට යොමු කිරීම",
         ins3Body: "දිනකට සාමාන්‍යයෙන් <strong>20,400+</strong> පිරිසක් පෝස්ට් කියවුවද, පෝස්ට් හෝ කමෙන්ට් කරන්නේ <strong>245</strong>ක් පමණි. එනම් 98%කට වඩා සිටින්නේ තොරතුරු සොයන පාඨකයින්ය. ඔවුන්ව අදාළ WhatsApp Hubs වෙත යොමු කිරීමෙන් ඉක්මන් විසඳුම් ලැබේ.",
         ins3FootLabel: "උපරිම සක්‍රීය දායකයින්:",
         ins4Tag: "📈 වසරේ සමස්ත ප්‍රගතිය",
+        ins4Badge: "4.5x වර්ධනයක්",
         ins4Title: "2026 ජනවාරි මසට සාපේක්ෂව 450%ක පිම්මක්",
         ins4Body: "2026 ජනවාරි මාසයේ දිනකට පෝස්ට් ~83ක් සහ නැරඹුම් ~9,500ක් වූ අපගේ සමූහය, මේ වන විට දිනකට පෝස්ට් <strong>376</strong>ක් සහ නැරඹුම් <strong>83,914</strong> දක්වා වර්ධනය වී නාත්තන්ඩියේ ප්‍රධානතම ඩිජිටල් චතුරශ්‍රය බවට පත්ව ඇත.",
         ins4FootLabel: "දින 60 නව සාමාජිකයින්:",
@@ -866,14 +866,17 @@
         ins1Body: "நவம்பர் தொடக்கத்தில் நாளொன்றுக்கு சராசரியாக 16,600 ஆக இருந்த பார்வைகள் (Views), நவம்பர் 16 அன்று <strong>83,914</strong> ஆகவும் (+404%) நவம்பர் 19 அன்று <strong>75,612</strong> ஆகவும் உயர்ந்துள்ளன. இது புதிய உறுப்பினர்கள் இணைவதற்கு (நவ. 16: 87 பேர்) நேரடியாக உதவியுள்ளது.",
         ins1FootLabel: "அதிகபட்ச பார்வை நாள்:",
         ins2Tag: "💬 உரையாடல் மற்றும் எதிர்வினை அலை",
+        ins2Badge: "~376/நாள்",
         ins2Title: "நிலையான பதிவுகள் + அதிக எதிர்வினை எழுச்சிகள்",
         ins2Body: "60 நாட்களில் <strong>22,584 பதிவுகள்</strong> வெளியிடப்பட்டுள்ளன (நாளொன்றுக்கு ~376; அக். 7 உச்சம்: 582 பதிவுகள்). குறிப்பாக <strong>அக். 25 (1,884 எதிர்வினைகள்)</strong> மற்றும் <strong>செப். 26 (687 கருத்துகள்)</strong> ஆகிய நாட்களில் சமூகம் மிகுந்த ஆர்வத்துடன் பங்கேற்றுள்ளது.",
         ins2FootLabel: "அதிக எதிர்வினை நாள்:",
         ins3Tag: "🎯 Smart City மூலோபாயம்",
+        ins3Badge: "98.8% வாசகர்கள்",
         ins3Title: "அமைதியான வாசகர்களை WhatsApp மையங்களுக்கு வழிநடத்தல்",
         ins3Body: "நாளொன்றுக்கு சராசரியாக <strong>20,441 பேர்</strong> பதிவுகளைப் பார்த்தாலும், <strong>245 பேர்</strong> மட்டுமே பதிவிடுகிறார்கள் அல்லது கருத்துத் தெரிவிக்கிறார்கள். அதாவது 98.8% பேர் தகவல் தேடும் வாசகர்கள். அவர்களை உரிய WhatsApp Hubs-க்கு வழிநடத்துவது விரைவான தீர்வுகளைத் தரும்.",
         ins3FootLabel: "அதிகபட்ச செயற்பாட்டாளர்கள்:",
         ins4Tag: "📈 ஆண்டின் ஒட்டுமொத்த வளர்ச்சி",
+        ins4Badge: "4.5x வளர்ச்சி",
         ins4Title: "2026 ஜனவரியுடன் ஒப்பிடுகையில் 4.5 மடங்கு வளர்ச்சி",
         ins4Body: "2026 ஜனவரியில் நாளொன்றுக்கு ~83 பதிவுகள் மற்றும் ~9,500 பார்வைகள் கொண்டிருந்த எமது குழு, தற்போது நாளொன்றுக்கு <strong>376 பதிவுகள்</strong> மற்றும் <strong>83,914 பார்வைகள்</strong> வரை வளர்ந்து நாத்தாண்டியாவின் முதன்மை டிஜிட்டல் மையமாக மாறியுள்ளது.",
         ins4FootLabel: "60 நாள் புதிய உறுப்பினர்கள்:",
@@ -946,14 +949,17 @@
         ins1Body: "After averaging ~16,600 daily views through early November, group views surged to <strong>83,914 on Nov 16</strong> (+404%) and <strong>75,612 on Nov 19</strong>. This visibility wave directly drove a major member acquisition spike (87 new joins on Nov 16).",
         ins1FootLabel: "Peak Views Day:",
         ins2Tag: "💬 Steady Supply & Viral Waves",
+        ins2Badge: "~376/day",
         ins2Title: "Consistent Daily Posts + High-Engagement Spikes",
         ins2Body: "Members published <strong>22,584 posts</strong> across 60 days (~376/day; peaking at 582 posts on Oct 7). Community interaction surged on key discussion days such as <strong>Oct 25 (1,884 reactions)</strong> and <strong>Sept 26 (687 comments)</strong>.",
         ins2FootLabel: "Peak Reactions Day:",
         ins3Tag: "🎯 Smart City Funnel",
+        ins3Badge: "98.8% Readers",
         ins3Title: "Converting Passive Readers to WhatsApp Hubs",
         ins3Body: "While an average of <strong>20,441 members</strong> view content daily, ~<strong>245</strong> actively post or comment—meaning 98.8% are high-intent passive readers. Routing them to targeted WhatsApp Hubs delivers faster local solutions.",
         ins3FootLabel: "Peak Active Contributors:",
         ins4Tag: "📈 Year-over-Period Growth",
+        ins4Badge: "4.5x Growth",
         ins4Title: "4.5x Daily Post Growth Since January 2026",
         ins4Body: "Compared to our Jan 2026 baseline (~83 posts/day and ~9,500 views/day), the Nattandiya Main Group has expanded <strong>450% in daily post volume</strong> (~376/day) and up to <strong>8x in peak daily reach</strong>.",
         ins4FootLabel: "60-Day New Joins:",
