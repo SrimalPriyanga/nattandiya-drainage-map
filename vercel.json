@@ -5,10 +5,11 @@
   "outputDirectory": "dist",
   "redirects": [
     { "source": "/", "destination": "/nattandiya/", "permanent": false },
-    { "source": "/nattandiya", "destination": "/nattandiya/", "permanent": true }
+    { "source": "/nattandiya", "destination": "/nattandiya/", "permanent": true },
+    { "source": "/nattandiya/insights", "destination": "/nattandiya/insights/", "permanent": true }
   ],
   "rewrites": [
-    { "source": "/nattandiya/((?!assets/).*)", "destination": "/nattandiya/index.html" }
+    { "source": "/nattandiya/((?!assets/|insights(?:/|$)).*)", "destination": "/nattandiya/index.html" }
   ],
   "headers": [
     {

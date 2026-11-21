@@ -1,0 +1,1821 @@
+<!DOCTYPE html>
+<html lang="si" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>නාත්තන්ඩිය ප්‍රජා දත්ත පුවරුව | Nattandiya Group Insights Dashboard</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Noto Sans Sinhala (Primary), Noto Sans Tamil & Inter (English / Tabular Numerals) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Sinhala:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Chart.js for Interactive Data Visualizations -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <!-- SheetJS (XLSX) for optional dynamic multi-tab Excel inspection by team members -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Noto Sans Sinhala"', '"Noto Sans Tamil"', '"Inter"', 'system-ui', 'sans-serif'],
+            mono: ['"Inter"', 'monospace']
+          },
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              900: '#064e3b'
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* Ensure crisp Sinhala, Tamil & English typography and tabular numbers */
+    html, body {
+      max-width: 100%;
+      overflow-x: hidden;
+      -webkit-text-size-adjust: 100%;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      font-family: 'Noto Sans Sinhala', 'Noto Sans Tamil', 'Inter', system-ui, -apple-system, sans-serif;
+      font-feature-settings: "tnum" on, "lnum" on;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .safe-top {
+      padding-top: env(safe-area-inset-top, 0px);
+    }
+    .num-tabular {
+      font-family: 'Inter', 'Noto Sans Sinhala', 'Noto Sans Tamil', sans-serif;
+      font-variant-numeric: tabular-nums;
+    }
+    /* Custom scrollbar for horizontal tab strip & data table */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    /* Subtle glass elevation */
+    .card-surface {
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+    @media (hover: hover) {
+      .card-surface:hover {
+        transform: translateY(-2px);
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 antialiased selection:bg-emerald-500 selection:text-white">
+
+  <!-- =====================================================================
+       STICKY TOP NAVIGATION & CONTROLS BAR
+       Optimized for Android & iOS viewports (360px+) with full-width
+       trilingual titles, thumb-friendly 40px+ tap targets, and safe areas.
+  ====================================================================== -->
+  <header class="sticky top-0 z-40 safe-top bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm">
+    <div class="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 py-2.5 sm:py-3">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2.5 sm:gap-3">
+
+        <!-- Brand & Spreadsheet Source Badge (Full width on mobile so SI/TA/EN titles never cramp) -->
+        <div class="flex items-start sm:items-center gap-3 min-w-0">
+          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white flex items-center justify-center shadow-md shadow-emerald-600/20 shrink-0 mt-0.5 sm:mt-0">
+            <!-- Community Network SVG Icon -->
+            <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+            </svg>
+          </div>
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-2 flex-wrap">
+              <h1 id="hdr-title" class="text-sm sm:text-lg font-extrabold tracking-tight text-slate-900 dark:text-white leading-snug">
+                නාත්තන්ඩිය ප්‍රජා දත්ත විශ්ලේෂණ පුවරුව
+              </h1>
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300 shrink-0">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span id="hdr-live-badge">සජීවී වාර්තාව</span>
+              </span>
+            </div>
+            <p id="hdr-subtitle" class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">
+              Facebook_Group_Insights_11-21-2026.xlsx • 2026 සැප්තැම්බර් 21 – නොවැම්බර් 19 (දින 60)
+            </p>
+          </div>
+        </div>
+
+        <!-- Mobile Full-Width Trilingual Switcher (Easy one-thumb tap on iOS & Android) -->
+        <div class="grid grid-cols-3 lg:hidden rounded-xl bg-slate-100 dark:bg-slate-800 p-1 border border-slate-200 dark:border-slate-700 w-full" role="group" aria-label="Mobile Language Switcher">
+          <button type="button" onclick="setLanguage('si')" id="btn-lang-si-mobile" class="min-h-[38px] px-2 py-1.5 rounded-lg text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm text-center">
+            සිංහල
+          </button>
+          <button type="button" onclick="setLanguage('ta')" id="btn-lang-ta-mobile" class="min-h-[38px] px-2 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 text-center">
+            தமிழ்
+          </button>
+          <button type="button" onclick="setLanguage('en')" id="btn-lang-en-mobile" class="min-h-[38px] px-2 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 text-center">
+            English
+          </button>
+        </div>
+
+        <!-- Right Controls: Date Filter, Desktop Language Toggle, Share Summary, Dark Mode -->
+        <div class="flex flex-wrap items-center justify-between lg:justify-end gap-2">
+
+          <!-- Date Window Selector (Horizontal scroll-safe on 360px screens) -->
+          <div class="inline-flex items-center rounded-xl bg-slate-100 dark:bg-slate-800 p-1 border border-slate-200 dark:border-slate-700 overflow-x-auto no-scrollbar max-w-full flex-1 sm:flex-initial">
+            <button type="button" onclick="setDateRange('all')" data-range="all" class="range-btn min-h-[36px] px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm whitespace-nowrap">
+              <span data-i18n="rangeAll">දින 60 (සියල්ල)</span>
+            </button>
+            <button type="button" onclick="setDateRange('30')" data-range="30" class="range-btn min-h-[36px] px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 whitespace-nowrap">
+              <span data-i18n="range30">අවසන් දින 30</span>
+            </button>
+            <button type="button" onclick="setDateRange('14')" data-range="14" class="range-btn min-h-[36px] px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 whitespace-nowrap">
+              <span data-i18n="range14">අවසන් දින 14</span>
+            </button>
+            <button type="button" onclick="setDateRange('7')" data-range="7" class="range-btn min-h-[36px] px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 whitespace-nowrap">
+              <span data-i18n="range7">අවසන් දින 7</span>
+            </button>
+          </div>
+
+          <!-- Desktop Language Switcher (Sinhala Primary | Tamil | English) -->
+          <div class="hidden lg:inline-flex items-center rounded-xl bg-slate-100 dark:bg-slate-800 p-1 border border-slate-200 dark:border-slate-700" role="group" aria-label="Language Switcher">
+            <button type="button" onclick="setLanguage('si')" id="btn-lang-si" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm">
+              සිංහල
+            </button>
+            <button type="button" onclick="setLanguage('ta')" id="btn-lang-ta" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900">
+              தமிழ்
+            </button>
+            <button type="button" onclick="setLanguage('en')" id="btn-lang-en" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900">
+              English
+            </button>
+          </div>
+
+          <!-- Action Cluster: Share Summary + Theme Toggle -->
+          <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+            <button type="button" onclick="copyTeamSummary()" class="flex-1 sm:flex-initial justify-center min-h-[38px] inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-slate-900 dark:bg-emerald-600 text-white hover:bg-slate-800 dark:hover:bg-emerald-500 transition shadow-sm">
+              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+              </svg>
+              <span data-i18n="shareBtn">කණ්ඩායමට බෙදාගන්න</span>
+            </button>
+
+            <button type="button" onclick="toggleTheme()" id="theme-toggle" class="min-h-[38px] min-w-[38px] flex items-center justify-center p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition shrink-0" title="Toggle Theme">
+              <svg id="icon-moon" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+              </svg>
+              <svg id="icon-sun" class="w-4 h-4 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Wrapper -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- =====================================================================
+         SECTION 1: EXECUTIVE INSIGHTS AT THE TOP OF HOME PAGE
+         Provides actionable, data-backed strategic insights for the Nattandiya
+         Community Team (Admins & Moderators) in Sinhala & English.
+    ====================================================================== -->
+    <section aria-labelledby="insights-heading" class="rounded-2xl bg-gradient-to-br from-emerald-950 via-teal-900 to-slate-900 text-white p-5 sm:p-7 shadow-xl border border-emerald-800/40 relative overflow-hidden">
+      <!-- Decorative Background Glow -->
+      <div class="absolute -top-24 -right-24 w-72 h-72 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-amber-400/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="relative z-10">
+        <!-- Insights Section Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-4 border-b border-white/10">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/15 border border-amber-300/30 text-amber-300 text-xs font-bold mb-2">
+              <span>🌻</span>
+              <span data-i18n="insightBadge">ප්‍රධාන විශ්ලේෂණාත්මක තීක්ෂ්ණ බුද්ධිය • Executive Insights</span>
+            </div>
+            <h2 id="insights-heading" class="text-xl sm:text-2xl font-extrabold tracking-tight text-white" data-i18n="insightTitle">
+              නාත්තන්ඩිය ප්‍රජාවේ දත්ත විශ්ලේෂණය සහ කණ්ඩායමට වැදගත් නිගමන
+            </h2>
+          </div>
+          <div class="text-xs text-emerald-200/90 bg-white/5 border border-white/10 rounded-xl px-3.5 py-2.5 max-w-xs">
+            <span class="font-bold text-amber-300 block" data-i18n="insightPeriodLabel">විශ්ලේෂණ කාලසීමාව:</span>
+            <span id="insight-dynamic-period" class="num-tabular">2026-09-21 → 2026-11-19 (දින 60)</span>
+          </div>
+        </div>
+
+        <!-- 4 Data-Backed Insight Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mt-5">
+
+          <!-- Insight 1: Mid-November Viral Reach Explosion -->
+          <div class="rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 p-4 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-emerald-300" data-i18n="ins1Tag">🚀 ව්‍යාප්තියේ දැවැන්ත වර්ධනය</span>
+                <span class="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-200 text-xs font-bold num-tabular">+404%</span>
+              </div>
+              <h3 class="text-base font-bold text-white mb-1.5" data-i18n="ins1Title">
+                නොවැම්බර් 16–19 නැරඹුම් වාර්තා බිඳ හෙළයි
+              </h3>
+              <p class="text-xs text-slate-200 leading-relaxed" data-i18n="ins1Body">
+                දිනකට සාමාන්‍යයෙන් 16,600ක් වූ නැරඹුම් (Views), නොවැම්බර් 16 දින <strong>83,914</strong> දක්වාද නොවැම්බර් 19 දින <strong>75,612</strong> දක්වාද ඉහළ ගොස් ඇත. මෙය ප්‍රජාව වෙත අලුත් සාමාජිකයින් ගලා ඒමට (නොවැ. 16: 87 දෙනෙක්) සෘජුවම බලපා ඇත.
+              </p>
+            </div>
+            <div class="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] text-emerald-200">
+              <span data-i18n="ins1FootLabel">උපරිම නැරඹුම් දිනය:</span>
+              <span class="font-bold num-tabular">2026-11-16 (83,914)</span>
+            </div>
+          </div>
+
+          <!-- Insight 2: Content Supply vs Discussion Waves -->
+          <div class="rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 p-4 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-amber-300" data-i18n="ins2Tag">💬 සංවාද සහ ප්‍රතිචාර රැල්ල</span>
+                <span class="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-200 text-xs font-bold num-tabular">~376/දිනකට</span>
+              </div>
+              <h3 class="text-base font-bold text-white mb-1.5" data-i18n="ins2Title">
+                ස්ථාවර පෝස්ට් ප්‍රමාණයක් සහ ඉහළ ප්‍රතිචාර
+              </h3>
+              <p class="text-xs text-slate-200 leading-relaxed" data-i18n="ins2Body">
+                දින 60 තුළ පෝස්ට් <strong>22,584</strong>ක් පළ වී ඇත (ඔක්. 7 උපරිමය: පෝස්ට් 582). විශේෂයෙන් ඔක්තෝබර් 25 (ප්‍රතිචාර 1,884) සහ සැප්තැම්බර් 26 (කමෙන්ට් 687) වැනි දිනවල ප්‍රජාව ඉතා උද්යෝගයෙන් සංවාදවලට එක්වී ඇත.
+              </p>
+            </div>
+            <div class="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] text-amber-200">
+              <span data-i18n="ins2FootLabel">වැඩිම ප්‍රතිචාර දිනය:</span>
+              <span class="font-bold num-tabular">2026-10-25 (1,884)</span>
+            </div>
+          </div>
+
+          <!-- Insight 3: Passive Viewer to WhatsApp Hub Funnel -->
+          <div class="rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 p-4 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-sky-300" data-i18n="ins3Tag">🎯 Smart City උපායමාර්ගය</span>
+                <span class="px-2 py-0.5 rounded-md bg-sky-500/20 text-sky-200 text-xs font-bold num-tabular">98.8% Readers</span>
+              </div>
+              <h3 class="text-base font-bold text-white mb-1.5" data-i18n="ins3Title">
+                නිහඬ පාඨකයින් WhatsApp ජාලයට යොමු කිරීම
+              </h3>
+              <p class="text-xs text-slate-200 leading-relaxed" data-i18n="ins3Body">
+                දිනකට සාමාන්‍යයෙන් <strong>20,400+</strong> පිරිසක් පෝස්ට් කියවුවද, පෝස්ට් හෝ කමෙන්ට් කරන්නේ <strong>245</strong>ක් පමණි. එනම් 98%කට වඩා සිටින්නේ තොරතුරු සොයන පාඨකයින්ය. ඔවුන්ව අදාළ WhatsApp Hubs වෙත යොමු කිරීමෙන් ඉක්මන් විසඳුම් ලැබේ.
+              </p>
+            </div>
+            <div class="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] text-sky-200">
+              <span data-i18n="ins3FootLabel">උපරිම සක්‍රීය දායකයින්:</span>
+              <span class="font-bold num-tabular">2026-10-21 (447)</span>
+            </div>
+          </div>
+
+          <!-- Insight 4: 2026 Yearly Growth Trajectory -->
+          <div class="rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 p-4 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-purple-300" data-i18n="ins4Tag">📈 වසරේ සමස්ත ප්‍රගතිය</span>
+                <span class="px-2 py-0.5 rounded-md bg-purple-500/20 text-purple-200 text-xs font-bold num-tabular">4.5x වර්ධනයක්</span>
+              </div>
+              <h3 class="text-base font-bold text-white mb-1.5" data-i18n="ins4Title">
+                2026 ජනවාරි මසට සාපේක්ෂව 450%ක පිම්මක්
+              </h3>
+              <p class="text-xs text-slate-200 leading-relaxed" data-i18n="ins4Body">
+                2026 ජනවාරි මාසයේ දිනකට පෝස්ට් ~83ක් සහ නැරඹුම් ~9,500ක් වූ අපගේ සමූහය, මේ වන විට දිනකට පෝස්ට් <strong>376</strong>ක් සහ නැරඹුම් <strong>83,914</strong> දක්වා වර්ධනය වී නාත්තන්ඩියේ ප්‍රධානතම ඩිජිටල් චතුරශ්‍රය බවට පත්ව ඇත.
+              </p>
+            </div>
+            <div class="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-[11px] text-purple-200">
+              <span data-i18n="ins4FootLabel">දින 60 නව සාමාජිකයින්:</span>
+              <span class="font-bold num-tabular">+2,621</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Actionable Team Recommendation Strip -->
+        <div class="mt-4 rounded-xl bg-emerald-900/60 border border-emerald-400/25 px-4 py-3 flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div class="flex items-start sm:items-center gap-2.5">
+            <span class="text-lg shrink-0">💡</span>
+            <p class="text-xs sm:text-sm text-emerald-50 leading-relaxed" data-i18n="teamActionNote">
+              <strong>Admin කණ්ඩායමට උපදෙස:</strong> නැරඹුම් සහ සාමාජිකයින් එකතු වීම වැඩිම <strong>සඳුදා, සිකුරාදා සහ සති අන්ත දිනවල</strong> පෝස්ට් අනුමත කිරීම වේගවත් කර, Market, Services සහ Jobs සඳහා අදාළ WhatsApp Hub ලින්ක් පළමු කමෙන්ට් එක ලෙස යොමු කරන්න.
+            </p>
+          </div>
+          <button type="button" onclick="scrollToSection('tab-navigation')" class="shrink-0 self-start md:self-center px-3 py-1.5 rounded-lg bg-white/15 hover:bg-white/25 text-xs font-bold text-white transition">
+            <span data-i18n="exploreTabsBtn">වගු පටිති බලන්න ↓</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SECTION 2: DYNAMIC KPI SUMMARY CARDS (6 METRICS)
+         Automatically updates when the user toggles date ranges (60d/30d/14d/7d)
+         or switches between Sinhala and English.
+    ====================================================================== -->
+    <section aria-label="Key Performance Indicators" class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3.5">
+
+      <!-- KPI 1: Total Viewed -->
+      <div class="card-surface rounded-2xl bg-white dark:bg-slate-900 p-4 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1.5">
+          <span class="text-xs font-semibold" data-i18n="kpiViews">මුළු නැරඹුම්</span>
+          <span class="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400">👁️</span>
+        </div>
+        <div id="kpi-views-total" class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white num-tabular">1,226,482</div>
+        <div class="mt-1.5 flex items-center justify-between text-[11px]">
+          <span class="text-slate-500 dark:text-slate-400" data-i18n="dailyAvg">දෛනික සාමාන්‍යය:</span>
+          <span id="kpi-views-avg" class="font-bold text-emerald-600 dark:text-emerald-400 num-tabular">20,441</span>
+        </div>
+      </div>
+
+      <!-- KPI 2: Total Posts -->
+      <div class="card-surface rounded-2xl bg-white dark:bg-slate-900 p-4 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1.5">
+          <span class="text-xs font-semibold" data-i18n="kpiPosts">මුළු පෝස්ට්</span>
+          <span class="p-1.5 rounded-lg bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400">📝</span>
+        </div>
+        <div id="kpi-posts-total" class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white num-tabular">22,584</div>
+        <div class="mt-1.5 flex items-center justify-between text-[11px]">
+          <span class="text-slate-500 dark:text-slate-400" data-i18n="dailyAvg">දෛනික සාමාන්‍යය:</span>
+          <span id="kpi-posts-avg" class="font-bold text-blue-600 dark:text-blue-400 num-tabular">376</span>
+        </div>
+      </div>
+
+      <!-- KPI 3: Total Comments -->
+      <div class="card-surface rounded-2xl bg-white dark:bg-slate-900 p-4 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1.5">
+          <span class="text-xs font-semibold" data-i18n="kpiComments">මුළු කමෙන්ට්</span>
+          <span class="p-1.5 rounded-lg bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400">💬</span>
+        </div>
+        <div id="kpi-comments-total" class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white num-tabular">18,452</div>
+        <div class="mt-1.5 flex items-center justify-between text-[11px]">
+          <span class="text-slate-500 dark:text-slate-400" data-i18n="dailyAvg">දෛනික සාමාන්‍යය:</span>
+          <span id="kpi-comments-avg" class="font-bold text-amber-600 dark:text-amber-400 num-tabular">308</span>
+        </div>
+      </div>
+
+      <!-- KPI 4: Total Reactions -->
+      <div class="card-surface rounded-2xl bg-white dark:bg-slate-900 p-4 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1.5">
+          <span class="text-xs font-semibold" data-i18n="kpiReactions">මුළු ප්‍රතිචාර</span>
+          <span class="p-1.5 rounded-lg bg-rose-50 dark:bg-rose-950 text-rose-600 dark:text-rose-400">❤️</span>
+        </div>
+        <div id="kpi-reactions-total" class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white num-tabular">36,367</div>
+        <div class="mt-1.5 flex items-center justify-between text-[11px]">
+          <span class="text-slate-500 dark:text-slate-400" data-i18n="dailyAvg">දෛනික සාමාන්‍යය:</span>
+          <span id="kpi-reactions-avg" class="font-bold text-rose-600 dark:text-rose-400 num-tabular">606</span>
+        </div>
+      </div>
+
+      <!-- KPI 5: New Members Joined -->
+      <div class="card-surface rounded-2xl bg-white dark:bg-slate-900 p-4 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1.5">
+          <span class="text-xs font-semibold" data-i18n="kpiJoined">නව සාමාජිකයින්</span>
+          <span class="p-1.5 rounded-lg bg-teal-50 dark:bg-teal-950 text-teal-600 dark:text-teal-400">👥</span>
+        </div>
+        <div id="kpi-joined-total" class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white num-tabular">+2,621</div>
+        <div class="mt-1.5 flex items-center justify-between text-[11px]">
+          <span class="text-slate-500 dark:text-slate-400" data-i18n="dailyAvg">දෛනික සාමාන්‍යය:</span>
+          <span id="kpi-joined-avg" class="font-bold text-teal-600 dark:text-teal-400 num-tabular">+44</span>
+        </div>
+      </div>
+
+      <!-- KPI 6: Active Contributors (Posted or Commented) -->
+      <div class="card-surface rounded-2xl bg-white dark:bg-slate-900 p-4 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="flex items-center justify-between text-slate-500 dark:text-slate-400 mb-1.5">
+          <span class="text-xs font-semibold" data-i18n="kpiActive">සක්‍රීය දායකයින්</span>
+          <span class="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400">⚡</span>
+        </div>
+        <div id="kpi-active-avg" class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white num-tabular">245</div>
+        <div class="mt-1.5 flex items-center justify-between text-[11px]">
+          <span class="text-slate-500 dark:text-slate-400" data-i18n="peakDay">උපරිම දිනය:</span>
+          <span id="kpi-active-peak" class="font-bold text-indigo-600 dark:text-indigo-400 num-tabular">447</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- =====================================================================
+         SECTION 3: SPREADSHEET TAB NAVIGATION BAR
+         Represents every tab/dimension of the spreadsheet on a single page.
+         "All Tabs" keeps the entire single-page dashboard visible at once,
+         while individual tab buttons highlight & focus specific sections.
+    ====================================================================== -->
+    <nav id="tab-navigation" aria-label="Spreadsheet Tabs" class="bg-white dark:bg-slate-900 rounded-2xl p-2 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+        <button type="button" onclick="selectTab('all')" data-tab="all" class="sheet-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm whitespace-nowrap flex items-center gap-1.5">
+          <span>📊</span>
+          <span data-i18n="tabAll">සියලුම පටිති (Single-Page View)</span>
+        </button>
+        <button type="button" onclick="selectTab('daily')" data-tab="daily" class="sheet-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 whitespace-nowrap flex items-center gap-1.5">
+          <span>📅</span>
+          <span data-i18n="tabDaily">Daily Numbers (දෛනික දත්ත)</span>
+        </button>
+        <button type="button" onclick="selectTab('engagement')" data-tab="engagement" class="sheet-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 whitespace-nowrap flex items-center gap-1.5">
+          <span>🔥</span>
+          <span data-i18n="tabEngagement">Engagement (පෝස්ට් / ප්‍රතිචාර)</span>
+        </button>
+        <button type="button" onclick="selectTab('growth')" data-tab="growth" class="sheet-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 whitespace-nowrap flex items-center gap-1.5">
+          <span>📈</span>
+          <span data-i18n="tabGrowth">Growth & Reach (වර්ධනය සහ ව්‍යාප්තිය)</span>
+        </button>
+        <button type="button" onclick="selectTab('ledger')" data-tab="ledger" class="sheet-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 whitespace-nowrap flex items-center gap-1.5">
+          <span>📋</span>
+          <span data-i18n="tabLedger">Data Ledger (සම්පූර්ණ වගුව)</span>
+        </button>
+      </div>
+
+      <!-- Optional Workbook Uploader for Team Updates -->
+      <div class="flex items-center gap-2 px-1">
+        <label for="xlsx-upload" class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition whitespace-nowrap">
+          <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+          </svg>
+          <span data-i18n="uploadXlsx">නව Excel ගොනුවක් (.xlsx)</span>
+        </label>
+        <input id="xlsx-upload" type="file" accept=".xlsx,.xls,.csv" class="hidden" onchange="handleExcelUpload(event)" />
+      </div>
+    </nav>
+
+    <!-- Dynamic Extra Uploaded Sheets Banner (Hidden unless team uploads a multi-tab Excel file) -->
+    <div id="custom-sheets-container" class="hidden space-y-4"></div>
+
+    <!-- =====================================================================
+         SECTION 4: TAB 1 - DAILY NUMBERS (REACH & MEMBER GROWTH TRAJECTORY)
+    ====================================================================== -->
+    <section id="section-daily" class="tab-panel rounded-2xl bg-white dark:bg-slate-900 p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300">
+              Tab: Daily Numbers
+            </span>
+            <h2 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white" data-i18n="chartReachTitle">
+              දෛනික නැරඹුම් (Viewed) සහ නව සාමාජිකයින් (Joined) ප්‍රවණතාව
+            </h2>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n="chartReachDesc">
+            සමූහයේ පෝස්ට් නැරඹූ පිරිස සහ අලුතින් සමූහයට එක්වූ සාමාජිකයින්ගේ දෛනික වෙනස්වීම
+          </p>
+        </div>
+        <div class="flex items-center gap-3 text-xs font-semibold">
+          <span class="inline-flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+            <span data-i18n="legendViewed">නැරඹුම් (Viewed)</span>
+          </span>
+          <span class="inline-flex items-center gap-1.5 text-amber-600 dark:text-amber-400">
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+            <span data-i18n="legendJoined">නව සාමාජිකයින් (Joined)</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="relative h-64 sm:h-80 w-full touch-pan-y">
+        <canvas id="reachGrowthChart"></canvas>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SECTION 5: TAB 2 - ENGAGEMENT & CONTENT VELOCITY
+         Left: Posts, Comments & Reactions Daily Chart
+         Right: Top 7 Peak Engagement Days Leaderboard
+    ====================================================================== -->
+    <section id="section-engagement" class="tab-panel grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- Left 2 Columns: Content & Reactions Chart -->
+      <div class="lg:col-span-2 rounded-2xl bg-white dark:bg-slate-900 p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-300">
+                  Tab: Content & Engagement
+                </span>
+                <h2 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white" data-i18n="chartEngTitle">
+                  පෝස්ට්, කමෙන්ට් සහ ප්‍රතිචාර (Posts, Comments & Reactions)
+                </h2>
+              </div>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n="chartEngDesc">
+                දෛනිකව පළවන පෝස්ට් සංඛ්‍යාවට සාපේක්ෂව ප්‍රජාව දක්වන ප්‍රතිචාර සහ අදහස් දැක්වීම්
+              </p>
+            </div>
+          </div>
+          <div class="relative h-64 sm:h-80 w-full touch-pan-y">
+            <canvas id="engagementChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Top Viral Days Leaderboard -->
+      <div class="rounded-2xl bg-white dark:bg-slate-900 p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-base font-extrabold text-slate-900 dark:text-white" data-i18n="topDaysTitle">
+              🏆 වැඩිම සක්‍රීයතාවක් තිබූ දින 6
+            </h3>
+            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300" data-i18n="byTotalEngagement">
+              ප්‍රතිචාර + කමෙන්ට් අනුව
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mb-4" data-i18n="topDaysDesc">
+            ප්‍රජාවේ වැඩිම අවධානය සහ සංවාද ඇති වූ සුවිශේෂී දිනයන්
+          </p>
+
+          <div id="top-days-list" class="space-y-2.5">
+            <!-- Populated dynamically via JS -->
+          </div>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-between">
+          <span data-i18n="avgEngPerPostLabel">පෝස්ට් 1කට සාමාන්‍ය ප්‍රතිචාර:</span>
+          <span id="avg-eng-per-post" class="font-bold text-slate-800 dark:text-slate-200 num-tabular">2.43</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- =====================================================================
+         SECTION 6: TAB 3 - GROWTH, WEEKLY COHORTS & DAY-OF-WEEK ANALYTICS
+         Left: Day-of-Week Performance (Mon-Sun)
+         Right: Weekly Cohort Progression (9 Weeks)
+    ====================================================================== -->
+    <section id="section-growth" class="tab-panel grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+      <!-- Day of Week Analysis -->
+      <div class="rounded-2xl bg-white dark:bg-slate-900 p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="flex items-center justify-between gap-2 mb-3">
+          <div>
+            <span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-300">
+              Tab: Weekly Rhythm
+            </span>
+            <h3 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white mt-1" data-i18n="dowTitle">
+              සතියේ දින අනුව සාමාන්‍ය සක්‍රීයතාව (සඳුදා – ඉරිදා)
+            </h3>
+          </div>
+        </div>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mb-4" data-i18n="dowDesc">
+          Admin වරුන්ට නිවේදන සහ WhatsApp Hub ලින්ක් පළ කිරීමට වඩාත්ම සුදුසු දින හඳුනාගැනීම
+        </p>
+        <div class="relative h-60 sm:h-64 w-full touch-pan-y">
+          <canvas id="dowChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Weekly Rollup (Week 1 to Week 9) -->
+      <div class="rounded-2xl bg-white dark:bg-slate-900 p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="flex items-center justify-between gap-2 mb-3">
+          <div>
+            <span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-teal-100 text-teal-800 dark:bg-teal-900/50 dark:text-teal-300">
+              Tab: Growth & Contributors
+            </span>
+            <h3 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white mt-1" data-i18n="weeklyTitle">
+              සතිපතා සක්‍රීය දායකයින් සහ නව සාමාජිකයින් (සති 9)
+            </h3>
+          </div>
+        </div>
+        <p class="text-xs text-slate-500 dark:text-slate-400 mb-4" data-i18n="weeklyDesc">
+          සතියෙන් සතිය පෝස්ට්/කමෙන්ට් කළ පිරිස (Posted or Commented) සහ නව සාමාජික වර්ධනය
+        </p>
+        <div class="relative h-60 sm:h-64 w-full touch-pan-y">
+          <canvas id="weeklyChart"></canvas>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- =====================================================================
+         SECTION 7: TAB 4 - FULL SPREADSHEET DATA LEDGER (Daily Numbers A1:G61)
+         Searchable, sortable, and exportable raw table representing every
+         single row of Facebook_Group_Insights_11-21-2026.xlsx.
+    ====================================================================== -->
+    <section id="section-ledger" class="tab-panel rounded-2xl bg-white dark:bg-slate-900 p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-slate-200 text-slate-800 dark:bg-slate-800 dark:text-slate-200">
+              Sheet: Daily Numbers (A1:G61)
+            </span>
+            <h2 class="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white" data-i18n="tableTitle">
+              සම්පූර්ණ දෛනික දත්ත වගුව (Spreadsheet Ledger)
+            </h2>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n="tableDesc">
+            ඕනෑම තීරුවක් (Column) මත ක්ලික් කිරීමෙන් දත්ත අනුපිළිවෙලට සකස් කළ හැක
+          </p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full md:w-auto">
+          <!-- Search / Filter Input (16px text-base on mobile prevents iOS Safari auto-zoom) -->
+          <div class="relative flex-1 sm:flex-initial">
+            <input type="text" id="table-search" oninput="renderTable()" placeholder="දිනය හෝ දවස සොයන්න (උදා: 2026-11)..." class="pl-8 pr-3 py-2 sm:py-1.5 rounded-xl text-base sm:text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 w-full sm:w-60" />
+            <svg class="w-4 h-4 sm:w-3.5 sm:h-3.5 text-slate-400 absolute left-2.5 top-3 sm:top-2.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+            </svg>
+          </div>
+
+          <!-- Export CSV Button -->
+          <button type="button" onclick="exportCSV()" class="min-h-[38px] sm:min-h-0 justify-center inline-flex items-center gap-1.5 px-3 py-2 sm:py-1.5 rounded-xl text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 transition shrink-0">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+            </svg>
+            <span data-i18n="exportCsv">CSV බාගත කරන්න</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Responsive Scrollable Table -->
+      <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800 max-h-[440px]">
+        <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-800 text-xs">
+          <thead class="bg-slate-100 dark:bg-slate-800/90 sticky top-0 z-10 text-slate-700 dark:text-slate-200">
+            <tr>
+              <th scope="col" onclick="sortTable('date')" class="cursor-pointer px-3.5 py-3 text-left font-bold hover:text-emerald-600 select-none whitespace-nowrap">
+                <span data-i18n="colDate">දිනය (Date)</span> ↕
+              </th>
+              <th scope="col" class="px-3 py-3 text-left font-bold whitespace-nowrap">
+                <span data-i18n="colDay">දවස</span>
+              </th>
+              <th scope="col" onclick="sortTable('posts')" class="cursor-pointer px-3.5 py-3 text-right font-bold hover:text-emerald-600 select-none whitespace-nowrap">
+                <span data-i18n="colPosts">පෝස්ට් (Posts)</span> ↕
+              </th>
+              <th scope="col" onclick="sortTable('comments')" class="cursor-pointer px-3.5 py-3 text-right font-bold hover:text-emerald-600 select-none whitespace-nowrap">
+                <span data-i18n="colComments">කමෙන්ට් (Comments)</span> ↕
+              </th>
+              <th scope="col" onclick="sortTable('reactions')" class="cursor-pointer px-3.5 py-3 text-right font-bold hover:text-emerald-600 select-none whitespace-nowrap">
+                <span data-i18n="colReactions">ප්‍රතිචාර (Reactions)</span> ↕
+              </th>
+              <th scope="col" onclick="sortTable('joined')" class="cursor-pointer px-3.5 py-3 text-right font-bold hover:text-emerald-600 select-none whitespace-nowrap">
+                <span data-i18n="colJoined">නව සාමාජිකයින් (Joined)</span> ↕
+              </th>
+              <th scope="col" onclick="sortTable('active')" class="cursor-pointer px-3.5 py-3 text-right font-bold hover:text-emerald-600 select-none whitespace-nowrap">
+                <span data-i18n="colActive">සක්‍රීය දායකයින්</span> ↕
+              </th>
+              <th scope="col" onclick="sortTable('viewed')" class="cursor-pointer px-3.5 py-3 text-right font-bold hover:text-emerald-600 select-none whitespace-nowrap">
+                <span data-i18n="colViewed">නැරඹුම් (Viewed)</span> ↕
+              </th>
+            </tr>
+          </thead>
+          <tbody id="data-table-body" class="divide-y divide-slate-100 dark:divide-slate-800/70 bg-white dark:bg-slate-900 num-tabular">
+            <!-- Populated dynamically via JS -->
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-2.5 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
+        <span id="table-row-count">පෙන්වන පේළි ගණන: 60 / 60</span>
+        <span data-i18n="sourceFileNote">මූලාශ්‍රය: Facebook_Group_Insights_11-21-2026.xlsx (Daily Numbers)</span>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 border-t border-slate-200 dark:border-slate-800 mt-4 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400">
+    <div>
+      <span class="font-bold text-slate-700 dark:text-slate-300">Nattandiya | නාත්තන්ඩිය | நாத்தாண்டியா</span> •
+      <span data-i18n="footerTag">ප්‍රජාව විසින් ප්‍රජාව ගොඩනගා ගනිමු 🌻</span>
+    </div>
+    <div data-i18n="footerPublicNote">
+      කණ්ඩායම් සාමාජිකයින් සඳහා පොදු විශ්ලේෂණ වාර්තාව • Public Team Analytics Dashboard
+    </div>
+  </footer>
+
+  <!-- Toast Notification Banner (No alert() used) -->
+  <div id="toast-banner" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="bg-slate-900 dark:bg-emerald-600 text-white px-4 py-3 rounded-xl shadow-xl border border-white/10 flex items-center gap-2.5 text-xs font-semibold">
+      <span>✅</span>
+      <span id="toast-message">පණිවිඩය පිටපත් කරන ලදී!</span>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       APPLICATION LOGIC, EMBEDDED SPREADSHEET DATA & BILINGUAL DICTIONARY
+  ====================================================================== -->
+  <script>
+    /**
+     * Exact dataset extracted from Facebook_Group_Insights_11-21-2026.xlsx
+     * Sheet: "Daily Numbers" (Range A1:G61, 60 days from 2026-09-21 to 2026-11-19)
+     */
+    const RAW_INSIGHTS_DATA = [
+      { date: "2026-09-21", posts: 344, comments: 333, reactions: 401, joined: 49, active: 256, viewed: 14945 },
+      { date: "2026-09-22", posts: 464, comments: 204, reactions: 340, joined: 37, active: 164, viewed: 12938 },
+      { date: "2026-09-23", posts: 387, comments: 177, reactions: 264, joined: 47, active: 153, viewed: 12914 },
+      { date: "2026-09-24", posts: 378, comments: 288, reactions: 416, joined: 63, active: 244, viewed: 15213 },
+      { date: "2026-09-25", posts: 345, comments: 201, reactions: 326, joined: 53, active: 174, viewed: 13679 },
+      { date: "2026-09-26", posts: 358, comments: 687, reactions: 934, joined: 47, active: 284, viewed: 16112 },
+      { date: "2026-09-27", posts: 302, comments: 116, reactions: 279, joined: 25, active: 114, viewed: 11980 },
+      { date: "2026-09-28", posts: 346, comments: 203, reactions: 227, joined: 36, active: 166, viewed: 12665 },
+      { date: "2026-09-29", posts: 337, comments: 264, reactions: 335, joined: 37, active: 208, viewed: 13334 },
+      { date: "2026-09-30", posts: 426, comments: 236, reactions: 467, joined: 26, active: 210, viewed: 14345 },
+      { date: "2026-10-01", posts: 391, comments: 239, reactions: 384, joined: 37, active: 195, viewed: 13740 },
+      { date: "2026-10-02", posts: 360, comments: 176, reactions: 359, joined: 45, active: 152, viewed: 13207 },
+      { date: "2026-10-03", posts: 372, comments: 229, reactions: 534, joined: 68, active: 204, viewed: 16492 },
+      { date: "2026-10-04", posts: 361, comments: 142, reactions: 353, joined: 58, active: 131, viewed: 12773 },
+      { date: "2026-10-05", posts: 387, comments: 215, reactions: 340, joined: 59, active: 204, viewed: 14891 },
+      { date: "2026-10-06", posts: 376, comments: 200, reactions: 414, joined: 55, active: 167, viewed: 15284 },
+      { date: "2026-10-07", posts: 582, comments: 181, reactions: 459, joined: 46, active: 161, viewed: 14270 },
+      { date: "2026-10-08", posts: 415, comments: 175, reactions: 294, joined: 39, active: 157, viewed: 12697 },
+      { date: "2026-10-09", posts: 410, comments: 316, reactions: 405, joined: 36, active: 230, viewed: 14128 },
+      { date: "2026-10-10", posts: 447, comments: 223, reactions: 332, joined: 24, active: 182, viewed: 13410 },
+      { date: "2026-10-11", posts: 438, comments: 284, reactions: 463, joined: 36, active: 211, viewed: 15461 },
+      { date: "2026-10-12", posts: 365, comments: 352, reactions: 410, joined: 35, active: 294, viewed: 15538 },
+      { date: "2026-10-13", posts: 386, comments: 328, reactions: 821, joined: 45, active: 277, viewed: 15850 },
+      { date: "2026-10-14", posts: 371, comments: 313, reactions: 705, joined: 39, active: 255, viewed: 15032 },
+      { date: "2026-10-15", posts: 358, comments: 272, reactions: 764, joined: 29, active: 249, viewed: 15897 },
+      { date: "2026-10-16", posts: 384, comments: 275, reactions: 351, joined: 26, active: 251, viewed: 14522 },
+      { date: "2026-10-17", posts: 321, comments: 556, reactions: 874, joined: 28, active: 433, viewed: 19108 },
+      { date: "2026-10-18", posts: 441, comments: 381, reactions: 763, joined: 38, active: 337, viewed: 18390 },
+      { date: "2026-10-19", posts: 354, comments: 200, reactions: 385, joined: 24, active: 176, viewed: 14768 },
+      { date: "2026-10-20", posts: 336, comments: 222, reactions: 340, joined: 31, active: 201, viewed: 13576 },
+      { date: "2026-10-21", posts: 388, comments: 615, reactions: 1129, joined: 47, active: 447, viewed: 18643 },
+      { date: "2026-10-22", posts: 298, comments: 392, reactions: 868, joined: 55, active: 315, viewed: 20005 },
+      { date: "2026-10-23", posts: 344, comments: 285, reactions: 617, joined: 34, active: 259, viewed: 16009 },
+      { date: "2026-10-24", posts: 331, comments: 317, reactions: 1494, joined: 34, active: 270, viewed: 19554 },
+      { date: "2026-10-25", posts: 393, comments: 491, reactions: 1884, joined: 91, active: 361, viewed: 23788 },
+      { date: "2026-10-26", posts: 422, comments: 434, reactions: 1105, joined: 47, active: 337, viewed: 20337 },
+      { date: "2026-10-27", posts: 383, comments: 466, reactions: 844, joined: 44, active: 334, viewed: 18511 },
+      { date: "2026-10-28", posts: 387, comments: 280, reactions: 763, joined: 37, active: 238, viewed: 18358 },
+      { date: "2026-10-29", posts: 376, comments: 367, reactions: 1137, joined: 37, active: 281, viewed: 18998 },
+      { date: "2026-10-30", posts: 352, comments: 299, reactions: 1038, joined: 48, active: 244, viewed: 23461 },
+      { date: "2026-10-31", posts: 289, comments: 358, reactions: 1792, joined: 48, active: 255, viewed: 28951 },
+      { date: "2026-11-01", posts: 393, comments: 331, reactions: 645, joined: 49, active: 268, viewed: 19973 },
+      { date: "2026-11-02", posts: 368, comments: 149, reactions: 393, joined: 44, active: 140, viewed: 16592 },
+      { date: "2026-11-03", posts: 412, comments: 216, reactions: 546, joined: 38, active: 185, viewed: 19085 },
+      { date: "2026-11-04", posts: 397, comments: 204, reactions: 377, joined: 46, active: 190, viewed: 17042 },
+      { date: "2026-11-05", posts: 371, comments: 260, reactions: 499, joined: 40, active: 207, viewed: 20743 },
+      { date: "2026-11-06", posts: 379, comments: 250, reactions: 429, joined: 34, active: 211, viewed: 18704 },
+      { date: "2026-11-07", posts: 314, comments: 238, reactions: 358, joined: 44, active: 203, viewed: 19129 },
+      { date: "2026-11-08", posts: 430, comments: 362, reactions: 575, joined: 35, active: 314, viewed: 20359 },
+      { date: "2026-11-09", posts: 363, comments: 327, reactions: 474, joined: 32, active: 279, viewed: 22260 },
+      { date: "2026-11-10", posts: 355, comments: 271, reactions: 534, joined: 44, active: 207, viewed: 23892 },
+      { date: "2026-11-11", posts: 312, comments: 228, reactions: 365, joined: 44, active: 189, viewed: 19755 },
+      { date: "2026-11-12", posts: 355, comments: 298, reactions: 523, joined: 33, active: 241, viewed: 21635 },
+      { date: "2026-11-13", posts: 351, comments: 340, reactions: 446, joined: 33, active: 275, viewed: 19450 },
+      { date: "2026-11-14", posts: 401, comments: 312, reactions: 408, joined: 35, active: 268, viewed: 20523 },
+      { date: "2026-11-15", posts: 391, comments: 434, reactions: 600, joined: 43, active: 379, viewed: 31521 },
+      { date: "2026-11-16", posts: 414, comments: 349, reactions: 966, joined: 87, active: 299, viewed: 83914 },
+      { date: "2026-11-17", posts: 385, comments: 369, reactions: 817, joined: 74, active: 281, viewed: 46745 },
+      { date: "2026-11-18", posts: 361, comments: 299, reactions: 614, joined: 55, active: 266, viewed: 38238 },
+      { date: "2026-11-19", posts: 364, comments: 383, reactions: 553, joined: 35, active: 324, viewed: 75612 }
+    ];
+
+    /**
+     * Bilingual Translation Dictionary (Sinhala Primary 'si' & English 'en')
+     */
+    const I18N = {
+      si: {
+        hdrTitle: "නාත්තන්ඩිය ප්‍රජා දත්ත විශ්ලේෂණ පුවරුව",
+        hdrLiveBadge: "සජීවී වාර්තාව",
+        hdrSubtitle: "Facebook_Group_Insights_11-21-2026.xlsx • 2026 සැප්තැම්බර් 21 – නොවැම්බර් 19 (දින 60)",
+        rangeAll: "දින 60 (සියල්ල)",
+        range30: "අවසන් දින 30",
+        range14: "අවසන් දින 14",
+        range7: "අවසන් දින 7",
+        shareBtn: "කණ්ඩායමට බෙදාගන්න",
+        insightBadge: "ප්‍රධාන විශ්ලේෂණාත්මක තීක්ෂ්ණ බුද්ධිය • Executive Insights",
+        insightTitle: "නාත්තන්ඩිය ප්‍රජාවේ දත්ත විශ්ලේෂණය සහ කණ්ඩායමට වැදගත් නිගමන",
+        insightPeriodLabel: "විශ්ලේෂණ කාලසීමාව:",
+        ins1Tag: "🚀 ව්‍යාප්තියේ දැවැන්ත වර්ධනය",
+        ins1Title: "නොවැම්බර් 16–19 නැරඹුම් වාර්තා බිඳ හෙළයි",
+        ins1Body: "දිනකට සාමාන්‍යයෙන් 16,600ක් වූ නැරඹුම් (Views), නොවැම්බර් 16 දින <strong>83,914</strong> දක්වාද නොවැම්බර් 19 දින <strong>75,612</strong> දක්වාද ඉහළ ගොස් ඇත. මෙය ප්‍රජාව වෙත අලුත් සාමාජිකයින් ගලා ඒමට (නොවැ. 16: 87 දෙනෙක්) සෘජුවම බලපා ඇත.",
+        ins1FootLabel: "උපරිම නැරඹුම් දිනය:",
+        ins2Tag: "💬 සංවාද සහ ප්‍රතිචාර රැල්ල",
+        ins2Title: "ස්ථාවර පෝස්ට් ප්‍රමාණයක් සහ ඉහළ ප්‍රතිචාර",
+        ins2Body: "දින 60 තුළ පෝස්ට් <strong>22,584</strong>ක් පළ වී ඇත (ඔක්. 7 උපරිමය: පෝස්ට් 582). විශේෂයෙන් ඔක්තෝබර් 25 (ප්‍රතිචාර 1,884) සහ සැප්තැම්බර් 26 (කමෙන්ට් 687) වැනි දිනවල ප්‍රජාව ඉතා උද්යෝගයෙන් සංවාදවලට එක්වී ඇත.",
+        ins2FootLabel: "වැඩිම ප්‍රතිචාර දිනය:",
+        ins3Tag: "🎯 Smart City උපායමාර්ගය",
+        ins3Title: "නිහඬ පාඨකයින් WhatsApp ජාලයට යොමු කිරීම",
+        ins3Body: "දිනකට සාමාන්‍යයෙන් <strong>20,400+</strong> පිරිසක් පෝස්ට් කියවුවද, පෝස්ට් හෝ කමෙන්ට් කරන්නේ <strong>245</strong>ක් පමණි. එනම් 98%කට වඩා සිටින්නේ තොරතුරු සොයන පාඨකයින්ය. ඔවුන්ව අදාළ WhatsApp Hubs වෙත යොමු කිරීමෙන් ඉක්මන් විසඳුම් ලැබේ.",
+        ins3FootLabel: "උපරිම සක්‍රීය දායකයින්:",
+        ins4Tag: "📈 වසරේ සමස්ත ප්‍රගතිය",
+        ins4Title: "2026 ජනවාරි මසට සාපේක්ෂව 450%ක පිම්මක්",
+        ins4Body: "2026 ජනවාරි මාසයේ දිනකට පෝස්ට් ~83ක් සහ නැරඹුම් ~9,500ක් වූ අපගේ සමූහය, මේ වන විට දිනකට පෝස්ට් <strong>376</strong>ක් සහ නැරඹුම් <strong>83,914</strong> දක්වා වර්ධනය වී නාත්තන්ඩියේ ප්‍රධානතම ඩිජිටල් චතුරශ්‍රය බවට පත්ව ඇත.",
+        ins4FootLabel: "දින 60 නව සාමාජිකයින්:",
+        teamActionNote: "<strong>Admin කණ්ඩායමට උපදෙස:</strong> නැරඹුම් සහ සාමාජිකයින් එකතු වීම වැඩිම <strong>සඳුදා, සිකුරාදා සහ සති අන්ත දිනවල</strong> පෝස්ට් අනුමත කිරීම වේගවත් කර, Market, Services සහ Jobs සඳහා අදාළ WhatsApp Hub ලින්ක් පළමු කමෙන්ට් එක ලෙස යොමු කරන්න.",
+        exploreTabsBtn: "වගු පටිති බලන්න ↓",
+        kpiViews: "මුළු නැරඹුම්",
+        kpiPosts: "මුළු පෝස්ට්",
+        kpiComments: "මුළු කමෙන්ට්",
+        kpiReactions: "මුළු ප්‍රතිචාර",
+        kpiJoined: "නව සාමාජිකයින්",
+        kpiActive: "සක්‍රීය දායකයින්",
+        dailyAvg: "දෛනික සාමාන්‍යය:",
+        peakDay: "උපරිම දිනය:",
+        tabAll: "සියලුම පටිති (Single-Page View)",
+        tabDaily: "Daily Numbers (දෛනික දත්ත)",
+        tabEngagement: "Engagement (පෝස්ට් / ප්‍රතිචාර)",
+        tabGrowth: "Growth & Reach (වර්ධනය සහ ව්‍යාප්තිය)",
+        tabLedger: "Data Ledger (සම්පූර්ණ වගුව)",
+        uploadXlsx: "නව Excel ගොනුවක් (.xlsx)",
+        chartReachTitle: "දෛනික නැරඹුම් (Viewed) සහ නව සාමාජිකයින් (Joined) ප්‍රවණතාව",
+        chartReachDesc: "සමූහයේ පෝස්ට් නැරඹූ පිරිස සහ අලුතින් සමූහයට එක්වූ සාමාජිකයින්ගේ දෛනික වෙනස්වීම",
+        legendViewed: "නැරඹුම් (Viewed)",
+        legendJoined: "නව සාමාජිකයින් (Joined)",
+        chartEngTitle: "පෝස්ට්, කමෙන්ට් සහ ප්‍රතිචාර (Posts, Comments & Reactions)",
+        chartEngDesc: "දෛනිකව පළවන පෝස්ට් සංඛ්‍යාවට සාපේක්ෂව ප්‍රජාව දක්වන ප්‍රතිචාර සහ අදහස් දැක්වීම්",
+        topDaysTitle: "🏆 වැඩිම සක්‍රීයතාවක් තිබූ දින 6",
+        byTotalEngagement: "ප්‍රතිචාර + කමෙන්ට් අනුව",
+        topDaysDesc: "ප්‍රජාවේ වැඩිම අවධානය සහ සංවාද ඇති වූ සුවිශේෂී දිනයන්",
+        avgEngPerPostLabel: "පෝස්ට් 1කට සාමාන්‍ය ප්‍රතිචාර:",
+        dowTitle: "සතියේ දින අනුව සාමාන්‍ය සක්‍රීයතාව (සඳුදා – ඉරිදා)",
+        dowDesc: "Admin වරුන්ට නිවේදන සහ WhatsApp Hub ලින්ක් පළ කිරීමට වඩාත්ම සුදුසු දින හඳුනාගැනීම",
+        weeklyTitle: "සතිපතා සක්‍රීය දායකයින් සහ නව සාමාජිකයින් (සති 9)",
+        weeklyDesc: "සතියෙන් සතිය පෝස්ට්/කමෙන්ට් කළ පිරිස (Posted or Commented) සහ නව සාමාජික වර්ධනය",
+        tableTitle: "සම්පූර්ණ දෛනික දත්ත වගුව (Spreadsheet Ledger)",
+        tableDesc: "ඕනෑම තීරුවක් (Column) මත ක්ලික් කිරීමෙන් දත්ත අනුපිළිවෙලට සකස් කළ හැක",
+        searchPlaceholder: "දිනය හෝ දවස සොයන්න (උදා: 2026-11)...",
+        exportCsv: "CSV බාගත කරන්න",
+        colDate: "දිනය (Date)",
+        colDay: "දවස",
+        colPosts: "පෝස්ට් (Posts)",
+        colComments: "කමෙන්ට් (Comments)",
+        colReactions: "ප්‍රතිචාර (Reactions)",
+        colJoined: "නව සාමාජිකයින් (Joined)",
+        colActive: "සක්‍රීය දායකයින්",
+        colViewed: "නැරඹුම් (Viewed)",
+        sourceFileNote: "මූලාශ්‍රය: Facebook_Group_Insights_11-21-2026.xlsx (Daily Numbers)",
+        footerTag: "ප්‍රජාව විසින් ප්‍රජාව ගොඩනගා ගනිමු 🌻",
+        footerPublicNote: "කණ්ඩායම් සාමාජිකයින් සඳහා පොදු විශ්ලේෂණ වාර්තාව • Public Team Analytics Dashboard",
+        daysOfWeek: ["ඉරිදා", "සඳුදා", "අඟහරුවාදා", "බදාදා", "බ්‍රහස්පතින්දා", "සිකුරාදා", "සෙනසුරාදා"],
+        daysOfWeekShort: ["ඉරි", "සඳු", "අඟ", "බදා", "බ්‍රහස්", "සිකු", "සෙන"],
+        weekPrefix: "සතිය ",
+        toastCopied: "කණ්ඩායමට බෙදාගත හැකි වාර්තා සාරාංශය පිටපත් කරන ලදී!",
+        toastCsv: "CSV ගොනුව බාගත වෙමින් පවතී!",
+        toastXlsxLoaded: "Excel ගොනුවේ පටිති සාර්ථකව පූරණය විය!"
+      },
+      ta: {
+        hdrTitle: "நாத்தாண்டியா சமூகத் தரவு பகுப்பாய்வுப் பலகை",
+        hdrLiveBadge: "நேரடி அறிக்கை",
+        hdrSubtitle: "Facebook_Group_Insights_11-21-2026.xlsx • 2026 செப்டம்பர் 21 – நவம்பர் 19 (60 நாட்கள்)",
+        rangeAll: "60 நாட்கள் (அனைத்தும்)",
+        range30: "கடந்த 30 நாட்கள்",
+        range14: "கடந்த 14 நாட்கள்",
+        range7: "கடந்த 7 நாட்கள்",
+        shareBtn: "குழுவுடன் பகிர்க",
+        insightBadge: "முக்கிய பகுப்பாய்வு நுண்ணறிவுகள் • Executive Insights",
+        insightTitle: "நாத்தாண்டியா சமூகத் தரவு பகுப்பாய்வு மற்றும் குழுவிற்கான முக்கிய முடிவுகள்",
+        insightPeriodLabel: "பகுப்பாய்வு காலம்:",
+        ins1Tag: "🚀 பார்வைகளின் மாபெரும் வளர்ச்சி",
+        ins1Title: "நவம்பர் 16–19 பார்வைச் சாதனைகளை முறியடித்தது",
+        ins1Body: "நவம்பர் தொடக்கத்தில் நாளொன்றுக்கு சராசரியாக 16,600 ஆக இருந்த பார்வைகள் (Views), நவம்பர் 16 அன்று <strong>83,914</strong> ஆகவும் (+404%) நவம்பர் 19 அன்று <strong>75,612</strong> ஆகவும் உயர்ந்துள்ளன. இது புதிய உறுப்பினர்கள் இணைவதற்கு (நவ. 16: 87 பேர்) நேரடியாக உதவியுள்ளது.",
+        ins1FootLabel: "அதிகபட்ச பார்வை நாள்:",
+        ins2Tag: "💬 உரையாடல் மற்றும் எதிர்வினை அலை",
+        ins2Title: "நிலையான பதிவுகள் + அதிக எதிர்வினை எழுச்சிகள்",
+        ins2Body: "60 நாட்களில் <strong>22,584 பதிவுகள்</strong> வெளியிடப்பட்டுள்ளன (நாளொன்றுக்கு ~376; அக். 7 உச்சம்: 582 பதிவுகள்). குறிப்பாக <strong>அக். 25 (1,884 எதிர்வினைகள்)</strong> மற்றும் <strong>செப். 26 (687 கருத்துகள்)</strong> ஆகிய நாட்களில் சமூகம் மிகுந்த ஆர்வத்துடன் பங்கேற்றுள்ளது.",
+        ins2FootLabel: "அதிக எதிர்வினை நாள்:",
+        ins3Tag: "🎯 Smart City மூலோபாயம்",
+        ins3Title: "அமைதியான வாசகர்களை WhatsApp மையங்களுக்கு வழிநடத்தல்",
+        ins3Body: "நாளொன்றுக்கு சராசரியாக <strong>20,441 பேர்</strong> பதிவுகளைப் பார்த்தாலும், <strong>245 பேர்</strong> மட்டுமே பதிவிடுகிறார்கள் அல்லது கருத்துத் தெரிவிக்கிறார்கள். அதாவது 98.8% பேர் தகவல் தேடும் வாசகர்கள். அவர்களை உரிய WhatsApp Hubs-க்கு வழிநடத்துவது விரைவான தீர்வுகளைத் தரும்.",
+        ins3FootLabel: "அதிகபட்ச செயற்பாட்டாளர்கள்:",
+        ins4Tag: "📈 ஆண்டின் ஒட்டுமொத்த வளர்ச்சி",
+        ins4Title: "2026 ஜனவரியுடன் ஒப்பிடுகையில் 4.5 மடங்கு வளர்ச்சி",
+        ins4Body: "2026 ஜனவரியில் நாளொன்றுக்கு ~83 பதிவுகள் மற்றும் ~9,500 பார்வைகள் கொண்டிருந்த எமது குழு, தற்போது நாளொன்றுக்கு <strong>376 பதிவுகள்</strong> மற்றும் <strong>83,914 பார்வைகள்</strong> வரை வளர்ந்து நாத்தாண்டியாவின் முதன்மை டிஜிட்டல் மையமாக மாறியுள்ளது.",
+        ins4FootLabel: "60 நாள் புதிய உறுப்பினர்கள்:",
+        teamActionNote: "<strong>Admin குழுவிற்கான ஆலோசனை:</strong> பார்வைகளும் புதிய உறுப்பினர்களும் அதிகம் இணையும் <strong>திங்கள், வெள்ளி மற்றும் வார இறுதி நாட்களில்</strong> பதிவுகளை விரைவாக அங்கீகரித்து, Market, Services மற்றும் Jobs பதிவுகளுக்கு உரிய WhatsApp Hub இணைப்பை முதல் கருத்தாக (First Comment) இடுங்கள்.",
+        exploreTabsBtn: "அட்டவணை தாவல்களைப் பார்க்க ↓",
+        kpiViews: "மொத்தப் பார்வைகள்",
+        kpiPosts: "மொத்தப் பதிவுகள்",
+        kpiComments: "மொத்தக் கருத்துகள்",
+        kpiReactions: "மொத்த எதிர்வினைகள்",
+        kpiJoined: "புதிய உறுப்பினர்கள்",
+        kpiActive: "செயற்பாட்டு பங்களிப்பாளர்கள்",
+        dailyAvg: "தினசரி சராசரி:",
+        peakDay: "உச்ச நாள்:",
+        tabAll: "அனைத்து தாவல்கள் (Single-Page View)",
+        tabDaily: "Daily Numbers (தினசரி தரவு)",
+        tabEngagement: "Engagement (பதிவுகள் / எதிர்வினைகள்)",
+        tabGrowth: "Growth & Reach (வளர்ச்சி மற்றும் பரவல்)",
+        tabLedger: "Data Ledger (முழு அட்டவணை)",
+        uploadXlsx: "புதிய Excel கோப்பு (.xlsx)",
+        chartReachTitle: "தினசரி பார்வைகள் (Viewed) மற்றும் புதிய உறுப்பினர்கள் (Joined) போக்கு",
+        chartReachDesc: "குழுவின் பதிவுகளைப் பார்த்தவர்களின் எண்ணிக்கை மற்றும் புதிதாக இணைந்த உறுப்பினர்களின் தினசரி மாற்றம்",
+        legendViewed: "பார்வைகள் (Viewed)",
+        legendJoined: "புதிய உறுப்பினர்கள் (Joined)",
+        chartEngTitle: "பதிவுகள், கருத்துகள் மற்றும் எதிர்வினைகள் (Posts, Comments & Reactions)",
+        chartEngDesc: "தினசரி வெளியிடப்படும் பதிவுகளுடன் ஒப்பிடுகையில் சமூகத்தின் எதிர்வினைகள் மற்றும் கருத்துகள்",
+        topDaysTitle: "🏆 அதிக செயற்பாடு கொண்ட 6 நாட்கள்",
+        byTotalEngagement: "எதிர்வினைகள் + கருத்துகள்",
+        topDaysDesc: "சமூகத்தின் அதிகபட்ச கவனத்தையும் உரையாடலையும் பெற்ற முக்கிய நாட்கள்",
+        avgEngPerPostLabel: "ஒரு பதிவிற்கான சராசரி எதிர்வினை:",
+        dowTitle: "வார நாட்களின் அடிப்படையில் சராசரி செயற்பாடு (திங்கள் – ஞாயிறு)",
+        dowDesc: "நிர்வாகிகள் அறிவிப்புகள் மற்றும் WhatsApp Hub இணைப்புகளைப் பகிர மிகச் சிறந்த நாட்களைக் கண்டறிதல்",
+        weeklyTitle: "வாராந்திர செயற்பாட்டு பங்களிப்பாளர்கள் & புதிய உறுப்பினர்கள் (9 வாரங்கள்)",
+        weeklyDesc: "வாரந்தோறும் பதிவிட்ட/கருத்திட்டவர்கள் மற்றும் புதிய உறுப்பினர் வளர்ச்சி",
+        tableTitle: "முழுமையான தினசரி தரவு அட்டவணை (Spreadsheet Ledger)",
+        tableDesc: "எந்தவொரு நெடுவரிசையையும் (Column) கிளிக் செய்து தரவை வரிசைப்படுத்தலாம்",
+        searchPlaceholder: "திகதி அல்லது நாளைத் தேடுக (எ.கா: 2026-11)...",
+        exportCsv: "CSV பதிவிறக்குக",
+        colDate: "திகதி (Date)",
+        colDay: "நாள்",
+        colPosts: "பதிவுகள் (Posts)",
+        colComments: "கருத்துகள் (Comments)",
+        colReactions: "எதிர்வினைகள் (Reactions)",
+        colJoined: "புதிய உறுப்பினர்கள் (Joined)",
+        colActive: "செயற்பாட்டாளர்கள்",
+        colViewed: "பார்வைகள் (Viewed)",
+        sourceFileNote: "மூலம்: Facebook_Group_Insights_11-21-2026.xlsx (Daily Numbers)",
+        footerTag: "சமூகத்தால் சமூகத்தைக் கட்டியெழுப்புவோம் 🌻",
+        footerPublicNote: "குழு உறுப்பினர்களுக்கான பொது பகுப்பாய்வு அறிக்கை • Public Team Analytics Dashboard",
+        daysOfWeek: ["ஞாயிறு", "திங்கள்", "செவ்வாய்", "புதன்", "வியாழன்", "வெள்ளி", "சனி"],
+        daysOfWeekShort: ["ஞாயி", "திங்", "செவ்", "புத", "வியா", "வெள்", "சனி"],
+        weekPrefix: "வாரம் ",
+        toastCopied: "குழுவுடன் பகிரக்கூடிய அறிக்கைச் சுருக்கம் நகலெடுக்கப்பட்டது!",
+        toastCsv: "CSV கோப்பு பதிவிறக்கப்படுகிறது...",
+        toastXlsxLoaded: "Excel கோப்பின் தாவல்கள் வெற்றிகரமாக ஏற்றப்பட்டன!"
+      },
+      en: {
+        hdrTitle: "Nattandiya Community Insights Dashboard",
+        hdrLiveBadge: "Live Report",
+        hdrSubtitle: "Facebook_Group_Insights_11-21-2026.xlsx • Sept 21 – Nov 19, 2026 (60 Days)",
+        rangeAll: "60 Days (All)",
+        range30: "Last 30 Days",
+        range14: "Last 14 Days",
+        range7: "Last 7 Days",
+        shareBtn: "Share with Team",
+        insightBadge: "Executive Insights & Strategic Takeaways",
+        insightTitle: "Nattandiya Community Analytics & Key Actionable Insights for Our Team",
+        insightPeriodLabel: "Analysis Window:",
+        ins1Tag: "🚀 Massive Reach Surge",
+        ins1Title: "Nov 16–19 Shatters All-Time View Records",
+        ins1Body: "After averaging ~16,600 daily views through early November, group views surged to <strong>83,914 on Nov 16</strong> (+404%) and <strong>75,612 on Nov 19</strong>. This visibility wave directly drove a major member acquisition spike (87 new joins on Nov 16).",
+        ins1FootLabel: "Peak Views Day:",
+        ins2Tag: "💬 Steady Supply & Viral Waves",
+        ins2Title: "Consistent Daily Posts + High-Engagement Spikes",
+        ins2Body: "Members published <strong>22,584 posts</strong> across 60 days (~376/day; peaking at 582 posts on Oct 7). Community interaction surged on key discussion days such as <strong>Oct 25 (1,884 reactions)</strong> and <strong>Sept 26 (687 comments)</strong>.",
+        ins2FootLabel: "Peak Reactions Day:",
+        ins3Tag: "🎯 Smart City Funnel",
+        ins3Title: "Converting Passive Readers to WhatsApp Hubs",
+        ins3Body: "While an average of <strong>20,441 members</strong> view content daily, ~<strong>245</strong> actively post or comment—meaning 98.8% are high-intent passive readers. Routing them to targeted WhatsApp Hubs delivers faster local solutions.",
+        ins3FootLabel: "Peak Active Contributors:",
+        ins4Tag: "📈 Year-over-Period Growth",
+        ins4Title: "4.5x Daily Post Growth Since January 2026",
+        ins4Body: "Compared to our Jan 2026 baseline (~83 posts/day and ~9,500 views/day), the Nattandiya Main Group has expanded <strong>450% in daily post volume</strong> (~376/day) and up to <strong>8x in peak daily reach</strong>.",
+        ins4FootLabel: "60-Day New Joins:",
+        teamActionNote: "<strong>Team & Admin Action Tip:</strong> Prioritize fast post approvals on <strong>Mondays, Fridays, and Weekends</strong> when reach peaks, and drop matching WhatsApp Hub links in the first comment for Market, Services, and Jobs posts.",
+        exploreTabsBtn: "Explore Spreadsheet Tabs ↓",
+        kpiViews: "Total Views",
+        kpiPosts: "Total Posts",
+        kpiComments: "Total Comments",
+        kpiReactions: "Total Reactions",
+        kpiJoined: "New Members Joined",
+        kpiActive: "Active Contributors",
+        dailyAvg: "Daily Avg:",
+        peakDay: "Peak Day:",
+        tabAll: "All Tabs (Single-Page View)",
+        tabDaily: "Daily Numbers",
+        tabEngagement: "Engagement & Content",
+        tabGrowth: "Growth & Reach",
+        tabLedger: "Data Ledger (Full Table)",
+        uploadXlsx: "Load New .xlsx",
+        chartReachTitle: "Daily Reach (Viewed) & New Member Growth (Joined)",
+        chartReachDesc: "Daily group viewership trajectory paired with new member onboarding velocity",
+        legendViewed: "Viewed",
+        legendJoined: "Joined",
+        chartEngTitle: "Content & Interaction Velocity (Posts, Comments & Reactions)",
+        chartEngDesc: "Daily posting volume compared against community reactions and comment discussions",
+        topDaysTitle: "🏆 Top 6 Highest-Engagement Days",
+        byTotalEngagement: "Reactions + Comments",
+        topDaysDesc: "Standout days generating maximum community interaction and conversation",
+        avgEngPerPostLabel: "Avg Interactions per Post:",
+        dowTitle: "Average Activity by Day of Week (Mon – Sun)",
+        dowDesc: "Identify optimal days for Admin announcements and WhatsApp Hub routing",
+        weeklyTitle: "Weekly Active Contributors & New Joins (9 Weeks)",
+        weeklyDesc: "Week-over-week unique posters/commenters and new member acquisition",
+        tableTitle: "Complete Daily Numbers Spreadsheet Ledger",
+        tableDesc: "Click any column header to sort records dynamically",
+        searchPlaceholder: "Search date or day (e.g., 2026-11)...",
+        exportCsv: "Export CSV",
+        colDate: "Date",
+        colDay: "Day",
+        colPosts: "Posts",
+        colComments: "Comments",
+        colReactions: "Reactions",
+        colJoined: "Joined",
+        colActive: "Posted or Commented",
+        colViewed: "Viewed",
+        sourceFileNote: "Source: Facebook_Group_Insights_11-21-2026.xlsx (Daily Numbers)",
+        footerTag: "Community Building Community 🌻",
+        footerPublicNote: "Public Team Analytics Dashboard • Nattandiya Smart City Ecosystem",
+        daysOfWeek: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+        daysOfWeekShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+        weekPrefix: "Week ",
+        toastCopied: "Executive summary copied to clipboard for sharing with your team!",
+        toastCsv: "Downloading CSV export...",
+        toastXlsxLoaded: "Spreadsheet tabs loaded successfully!"
+      }
+    };
+
+    // Global State
+    let currentLang = 'si'; // Sinhala is primary default language
+    let currentRange = 'all';
+    let currentTab = 'all';
+    let sortState = { key: 'date', asc: false }; // Latest dates first by default
+    let activeDataset = [...RAW_INSIGHTS_DATA];
+
+    // Chart instances
+    let reachChartInstance = null;
+    let engagementChartInstance = null;
+    let dowChartInstance = null;
+    let weeklyChartInstance = null;
+
+    /**
+     * Return dataset filtered by the active date range window ('all', '30', '14', '7')
+     */
+    function getFilteredData() {
+      if (currentRange === 'all') {
+        return [...activeDataset];
+      }
+      const days = parseInt(currentRange, 10);
+      return Number.isFinite(days) && days > 0 ? activeDataset.slice(-days) : [...activeDataset];
+    }
+
+    /**
+     * Format numeric values with thousand separators
+     */
+    function fmtNum(val) {
+      return Math.round(Number(val) || 0).toLocaleString('en-US');
+    }
+
+    /**
+     * Parse YYYY-MM-DD safely in local time and return day of week index (0 = Sun .. 6 = Sat)
+     */
+    function getDayIndex(dateStr) {
+      if (!dateStr || typeof dateStr !== 'string') return 0;
+      const parts = dateStr.split('-').map(Number);
+      if (parts.length === 3 && !parts.some(Number.isNaN)) {
+        return new Date(parts[0], parts[1] - 1, parts[2]).getDay();
+      }
+      const parsed = new Date(dateStr);
+      return Number.isNaN(parsed.getTime()) ? 0 : parsed.getDay();
+    }
+
+    /**
+     * Switch between Sinhala ('si'), Tamil ('ta'), and English ('en')
+     */
+    function setLanguage(lang) {
+      if (!I18N[lang]) return;
+      currentLang = lang;
+      document.documentElement.lang = lang;
+      const t = I18N[lang];
+
+      // Update Desktop & Mobile Language Button Active States
+      ['si', 'ta', 'en'].forEach(code => {
+        const isActive = code === lang;
+        const desktopBtn = document.getElementById(`btn-lang-${code}`);
+        const mobileBtn = document.getElementById(`btn-lang-${code}-mobile`);
+
+        [desktopBtn, mobileBtn].forEach(btn => {
+          if (!btn) return;
+          if (isActive) {
+            btn.className = btn.id.includes('mobile')
+              ? 'min-h-[38px] px-2 py-1.5 rounded-lg text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm text-center'
+              : 'px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm';
+          } else {
+            btn.className = btn.id.includes('mobile')
+              ? 'min-h-[38px] px-2 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white text-center'
+              : 'px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white';
+          }
+        });
+      });
+
+      // Update Header Strings
+      const hdrTitle = document.getElementById('hdr-title');
+      const hdrBadge = document.getElementById('hdr-live-badge');
+      const hdrSub = document.getElementById('hdr-subtitle');
+      if (hdrTitle) hdrTitle.textContent = t.hdrTitle;
+      if (hdrBadge) hdrBadge.textContent = t.hdrLiveBadge;
+      if (hdrSub) hdrSub.textContent = t.hdrSubtitle;
+
+      // Update all data-i18n elements
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (t[key] !== undefined) {
+          el.innerHTML = t[key];
+        }
+      });
+
+      // Update Search Input Placeholder
+      const searchInput = document.getElementById('table-search');
+      if (searchInput && t.searchPlaceholder) {
+        searchInput.placeholder = t.searchPlaceholder;
+      }
+
+      // Refresh dynamic KPIs, charts, top days, and table
+      refreshDashboard();
+    }
+
+    /**
+     * Filter dashboard window ('all', '30', '14', '7')
+     */
+    function setDateRange(range) {
+      currentRange = range;
+      document.querySelectorAll('.range-btn').forEach(btn => {
+        const isActive = btn.getAttribute('data-range') === range;
+        btn.className = isActive
+          ? 'range-btn min-h-[36px] px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm whitespace-nowrap'
+          : 'range-btn min-h-[36px] px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all text-slate-600 dark:text-slate-300 hover:text-slate-900 whitespace-nowrap';
+      });
+      refreshDashboard();
+    }
+
+    /**
+     * Switch spreadsheet tab focus on the single page ('all', 'daily', 'engagement', 'growth', 'ledger')
+     */
+    function selectTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.sheet-tab-btn').forEach(btn => {
+        const isActive = btn.getAttribute('data-tab') === tab;
+        btn.className = isActive
+          ? 'sheet-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm whitespace-nowrap flex items-center gap-1.5'
+          : 'sheet-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 whitespace-nowrap flex items-center gap-1.5';
+      });
+
+      const panels = ['daily', 'engagement', 'growth', 'ledger'];
+      panels.forEach(p => {
+        const section = document.getElementById(`section-${p}`);
+        if (!section) return;
+        if (tab === 'all' || tab === p) {
+          section.classList.remove('hidden');
+        } else {
+          section.classList.add('hidden');
+        }
+      });
+
+      renderCharts(getFilteredData());
+    }
+
+    /**
+     * Smoothly scroll to a target section ID
+     */
+    function scrollToSection(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    /**
+     * Toggle Light / Dark Theme and re-render charts to match palette
+     */
+    function toggleTheme() {
+      const htmlEl = document.documentElement;
+      const isDark = htmlEl.classList.toggle('dark');
+      const moon = document.getElementById('icon-moon');
+      const sun = document.getElementById('icon-sun');
+      if (moon && sun) {
+        moon.classList.toggle('hidden', isDark);
+        sun.classList.toggle('hidden', !isDark);
+      }
+      renderCharts(getFilteredData());
+    }
+
+    /**
+     * Show non-intrusive toast notification banner
+     */
+    let toastTimer = null;
+    function showToast(message) {
+      const banner = document.getElementById('toast-banner');
+      const msgEl = document.getElementById('toast-message');
+      if (!banner || !msgEl) return;
+      msgEl.textContent = message;
+      banner.classList.remove('translate-y-20', 'opacity-0');
+      banner.classList.add('translate-y-0', 'opacity-100');
+
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        banner.classList.add('translate-y-20', 'opacity-0');
+        banner.classList.remove('translate-y-0', 'opacity-100');
+      }, 3200);
+    }
+
+    /**
+     * Copy localized team summary to clipboard for WhatsApp/team sharing
+     */
+    function copyTeamSummary() {
+      const data = getFilteredData();
+      if (!data.length) return;
+      const t = I18N[currentLang];
+
+      const totals = data.reduce(
+        (acc, d) => {
+          acc.views += d.viewed;
+          acc.posts += d.posts;
+          acc.comments += d.comments;
+          acc.reactions += d.reactions;
+          acc.joined += d.joined;
+          return acc;
+        },
+        { views: 0, posts: 0, comments: 0, reactions: 0, joined: 0 }
+      );
+
+      const peakViewDay = [...data].sort((a, b) => b.viewed - a.viewed)[0];
+      const startDate = data[0].date;
+      const endDate = data[data.length - 1].date;
+
+      let summaryText = '';
+      if (currentLang === 'si') {
+        summaryText =
+          `🌻 *නාත්තන්ඩිය ප්‍රජා දත්ත සාරාංශය (${startDate} → ${endDate})*\n` +
+          `• 👁️ මුළු නැරඹුම්: ${fmtNum(totals.views)} (දිනකට ~${fmtNum(totals.views / data.length)})\n` +
+          `• 📝 මුළු පෝස්ට්: ${fmtNum(totals.posts)} (දිනකට ~${fmtNum(totals.posts / data.length)})\n` +
+          `• 💬 කමෙන්ට්: ${fmtNum(totals.comments)} | ❤️ ප්‍රතිචාර: ${fmtNum(totals.reactions)}\n` +
+          `• 👥 නව සාමාජිකයින්: +${fmtNum(totals.joined)}\n` +
+          `• 🚀 උපරිම නැරඹුම් දිනය: ${peakViewDay.date} (${fmtNum(peakViewDay.viewed)})\n` +
+          `_Nattandiya Smart City Team Dashboard_`;
+      } else if (currentLang === 'ta') {
+        summaryText =
+          `🌻 *நாத்தாண்டியா சமூகத் தரவுச் சுருக்கம் (${startDate} → ${endDate})*\n` +
+          `• 👁️ மொத்தப் பார்வைகள்: ${fmtNum(totals.views)} (தினசரி ~${fmtNum(totals.views / data.length)})\n` +
+          `• 📝 மொத்தப் பதிவுகள்: ${fmtNum(totals.posts)} (தினசரி ~${fmtNum(totals.posts / data.length)})\n` +
+          `• 💬 கருத்துகள்: ${fmtNum(totals.comments)} | ❤️ எதிர்வினைகள்: ${fmtNum(totals.reactions)}\n` +
+          `• 👥 புதிய உறுப்பினர்கள்: +${fmtNum(totals.joined)}\n` +
+          `• 🚀 அதிகபட்ச பார்வை நாள்: ${peakViewDay.date} (${fmtNum(peakViewDay.viewed)})\n` +
+          `_Nattandiya Smart City Team Dashboard_`;
+      } else {
+        summaryText =
+          `🌻 *Nattandiya Community Insights Summary (${startDate} → ${endDate})*\n` +
+          `• 👁️ Total Views: ${fmtNum(totals.views)} (~${fmtNum(totals.views / data.length)}/day)\n` +
+          `• 📝 Total Posts: ${fmtNum(totals.posts)} (~${fmtNum(totals.posts / data.length)}/day)\n` +
+          `• 💬 Comments: ${fmtNum(totals.comments)} | ❤️ Reactions: ${fmtNum(totals.reactions)}\n` +
+          `• 👥 New Members Joined: +${fmtNum(totals.joined)}\n` +
+          `• 🚀 Peak Views Day: ${peakViewDay.date} (${fmtNum(peakViewDay.viewed)})\n` +
+          `_Nattandiya Smart City Team Dashboard_`;
+      }
+
+      const tempArea = document.createElement('textarea');
+      tempArea.value = summaryText;
+      tempArea.style.position = 'fixed';
+      tempArea.style.opacity = '0';
+      document.body.appendChild(tempArea);
+      tempArea.select();
+      try {
+        document.execCommand('copy');
+        showToast(t.toastCopied);
+      } catch (err) {
+        showToast(summaryText.slice(0, 80) + '...');
+      }
+      document.body.removeChild(tempArea);
+    }
+
+    /**
+     * Render Top KPI Summary Cards & Dynamic Period Label
+     */
+    function renderKPIs(data) {
+      if (!data.length) return;
+      const count = data.length;
+      const sums = data.reduce(
+        (acc, d) => {
+          acc.views += d.viewed;
+          acc.posts += d.posts;
+          acc.comments += d.comments;
+          acc.reactions += d.reactions;
+          acc.joined += d.joined;
+          acc.active += d.active;
+          if (d.active > acc.peakActive) acc.peakActive = d.active;
+          return acc;
+        },
+        { views: 0, posts: 0, comments: 0, reactions: 0, joined: 0, active: 0, peakActive: 0 }
+      );
+
+      document.getElementById('kpi-views-total').textContent = fmtNum(sums.views);
+      document.getElementById('kpi-views-avg').textContent = fmtNum(sums.views / count);
+
+      document.getElementById('kpi-posts-total').textContent = fmtNum(sums.posts);
+      document.getElementById('kpi-posts-avg').textContent = fmtNum(sums.posts / count);
+
+      document.getElementById('kpi-comments-total').textContent = fmtNum(sums.comments);
+      document.getElementById('kpi-comments-avg').textContent = fmtNum(sums.comments / count);
+
+      document.getElementById('kpi-reactions-total').textContent = fmtNum(sums.reactions);
+      document.getElementById('kpi-reactions-avg').textContent = fmtNum(sums.reactions / count);
+
+      document.getElementById('kpi-joined-total').textContent = '+' + fmtNum(sums.joined);
+      document.getElementById('kpi-joined-avg').textContent = '+' + fmtNum(sums.joined / count);
+
+      document.getElementById('kpi-active-avg').textContent = fmtNum(sums.active / count);
+      document.getElementById('kpi-active-peak').textContent = fmtNum(sums.peakActive);
+
+      const avgEngPerPost = sums.posts > 0 ? ((sums.reactions + sums.comments) / sums.posts).toFixed(2) : '0.00';
+      const engRatioEl = document.getElementById('avg-eng-per-post');
+      if (engRatioEl) engRatioEl.textContent = avgEngPerPost;
+
+      const periodEl = document.getElementById('insight-dynamic-period');
+      if (periodEl) {
+        const dayWord = currentLang === 'si' ? 'දින' : currentLang === 'ta' ? 'நாட்கள்' : 'Days';
+        periodEl.textContent = `${data[0].date} → ${data[count - 1].date} (${count} ${dayWord})`;
+      }
+    }
+
+    /**
+     * Render Top 6 Highest-Engagement Days Leaderboard
+     */
+    function renderTopDays(data) {
+      const container = document.getElementById('top-days-list');
+      if (!container) return;
+      const t = I18N[currentLang];
+
+      const ranked = [...data]
+        .map(d => ({ ...d, totalEng: d.reactions + d.comments }))
+        .sort((a, b) => b.totalEng - a.totalEng)
+        .slice(0, 6);
+
+      const maxEng = ranked.length ? ranked[0].totalEng : 1;
+
+      container.innerHTML = ranked
+        .map((item, idx) => {
+          const dayName = t.daysOfWeek[getDayIndex(item.date)];
+          const pct = Math.max(12, Math.round((item.totalEng / maxEng) * 100));
+          const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
+          return `
+            <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-100 dark:border-slate-800">
+              <div class="flex items-center justify-between text-xs mb-1">
+                <div class="flex items-center gap-2 font-bold text-slate-800 dark:text-slate-100">
+                  <span>${medal}</span>
+                  <span class="num-tabular">${item.date}</span>
+                  <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400">(${dayName})</span>
+                </div>
+                <span class="font-extrabold text-emerald-600 dark:text-emerald-400 num-tabular">${fmtNum(item.totalEng)}</span>
+              </div>
+              <div class="w-full h-1.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden mb-1.5">
+                <div class="h-full rounded-full bg-gradient-to-r from-emerald-500 to-amber-500" style="width: ${pct}%"></div>
+              </div>
+              <div class="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 num-tabular">
+                <span>❤️ ${fmtNum(item.reactions)} • 💬 ${fmtNum(item.comments)}</span>
+                <span>👁️ ${fmtNum(item.viewed)}</span>
+              </div>
+            </div>
+          `;
+        })
+        .join('');
+    }
+
+    /**
+     * Render all 4 interactive Chart.js visualizations
+     */
+    function renderCharts(data) {
+      if (typeof Chart === 'undefined' || !data.length) return;
+      const t = I18N[currentLang];
+      const isDark = document.documentElement.classList.contains('dark');
+      const gridColor = isDark ? 'rgba(148, 163, 184, 0.12)' : 'rgba(148, 163, 184, 0.2)';
+      const tickColor = isDark ? '#94a3b8' : '#475569';
+
+      const labels = data.map(d => d.date.slice(5));
+
+      // 1. Reach & New Members Dual-Axis Chart
+      const reachCtx = document.getElementById('reachGrowthChart');
+      if (reachCtx) {
+        if (reachChartInstance) reachChartInstance.destroy();
+        reachChartInstance = new Chart(reachCtx, {
+          type: 'line',
+          data: {
+            labels,
+            datasets: [
+              {
+                label: t.legendViewed,
+                data: data.map(d => d.viewed),
+                borderColor: '#10b981',
+                backgroundColor: 'rgba(16, 185, 129, 0.14)',
+                borderWidth: 2.5,
+                fill: true,
+                tension: 0.35,
+                pointRadius: data.length > 35 ? 2 : 3.5,
+                pointHoverRadius: 5,
+                yAxisID: 'y'
+              },
+              {
+                label: t.legendJoined,
+                data: data.map(d => d.joined),
+                borderColor: '#f59e0b',
+                backgroundColor: '#f59e0b',
+                borderWidth: 2,
+                borderDash: [4, 3],
+                fill: false,
+                tension: 0.3,
+                pointRadius: data.length > 35 ? 2 : 3.5,
+                pointHoverRadius: 5,
+                yAxisID: 'y1'
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  title: items => data[items[0].dataIndex]?.date || ''
+                }
+              }
+            },
+            scales: {
+              x: { grid: { display: false }, ticks: { color: tickColor, maxTicksLimit: 12, font: { size: 11 } } },
+              y: {
+                type: 'linear',
+                position: 'left',
+                grid: { color: gridColor },
+                ticks: { color: tickColor, font: { size: 11 } }
+              },
+              y1: {
+                type: 'linear',
+                position: 'right',
+                grid: { drawOnChartArea: false },
+                ticks: { color: '#f59e0b', font: { size: 11 } }
+              }
+            }
+          }
+        });
+      }
+
+      // 2. Content & Engagement Chart (Posts Bars + Reactions & Comments Lines)
+      const engCtx = document.getElementById('engagementChart');
+      if (engCtx) {
+        if (engagementChartInstance) engagementChartInstance.destroy();
+        engagementChartInstance = new Chart(engCtx, {
+          data: {
+            labels,
+            datasets: [
+              {
+                type: 'line',
+                label: t.colReactions,
+                data: data.map(d => d.reactions),
+                borderColor: '#f43f5e',
+                backgroundColor: 'rgba(244, 63, 94, 0.1)',
+                borderWidth: 2.5,
+                tension: 0.35,
+                pointRadius: 2,
+                yAxisID: 'y'
+              },
+              {
+                type: 'line',
+                label: t.colComments,
+                data: data.map(d => d.comments),
+                borderColor: '#f59e0b',
+                backgroundColor: '#f59e0b',
+                borderWidth: 2,
+                tension: 0.35,
+                pointRadius: 2,
+                yAxisID: 'y'
+              },
+              {
+                type: 'bar',
+                label: t.colPosts,
+                data: data.map(d => d.posts),
+                backgroundColor: isDark ? 'rgba(59, 130, 246, 0.35)' : 'rgba(59, 130, 246, 0.25)',
+                borderColor: '#3b82f6',
+                borderWidth: 1,
+                borderRadius: 4,
+                yAxisID: 'y'
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+              legend: {
+                position: 'top',
+                labels: { color: tickColor, boxWidth: 12, font: { size: 11, weight: '600' } }
+              },
+              tooltip: {
+                callbacks: {
+                  title: items => data[items[0].dataIndex]?.date || ''
+                }
+              }
+            },
+            scales: {
+              x: { grid: { display: false }, ticks: { color: tickColor, maxTicksLimit: 12, font: { size: 11 } } },
+              y: { grid: { color: gridColor }, ticks: { color: tickColor, font: { size: 11 } } }
+            }
+          }
+        });
+      }
+
+      // 3. Day-of-Week Rhythm Chart (Monday = 1 .. Sunday = 0)
+      const dowCtx = document.getElementById('dowChart');
+      if (dowCtx) {
+        if (dowChartInstance) dowChartInstance.destroy();
+        const monToSunOrder = [1, 2, 3, 4, 5, 6, 0];
+        const buckets = monToSunOrder.map(idx => {
+          const rows = data.filter(d => getDayIndex(d.date) === idx);
+          const avgEng = rows.length
+            ? Math.round(rows.reduce((s, r) => s + r.reactions + r.comments, 0) / rows.length)
+            : 0;
+          const avgActive = rows.length
+            ? Math.round(rows.reduce((s, r) => s + r.active, 0) / rows.length)
+            : 0;
+          return {
+            label: t.daysOfWeekShort[idx],
+            avgEng,
+            avgActive
+          };
+        });
+
+        dowChartInstance = new Chart(dowCtx, {
+          type: 'bar',
+          data: {
+            labels: buckets.map(b => b.label),
+            datasets: [
+              {
+                label: `${t.colReactions} + ${t.colComments}`,
+                data: buckets.map(b => b.avgEng),
+                backgroundColor: '#8b5cf6',
+                borderRadius: 6
+              },
+              {
+                label: t.colActive,
+                data: buckets.map(b => b.avgActive),
+                backgroundColor: '#10b981',
+                borderRadius: 6
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'top',
+                labels: { color: tickColor, boxWidth: 12, font: { size: 11 } }
+              }
+            },
+            scales: {
+              x: { grid: { display: false }, ticks: { color: tickColor, font: { size: 11 } } },
+              y: { grid: { color: gridColor }, ticks: { color: tickColor, font: { size: 11 } } }
+            }
+          }
+        });
+      }
+
+      // 4. Weekly Cohort Progression Chart (Grouped in 7-day blocks)
+      const weeklyCtx = document.getElementById('weeklyChart');
+      if (weeklyCtx) {
+        if (weeklyChartInstance) weeklyChartInstance.destroy();
+        const weeks = [];
+        for (let i = 0; i < data.length; i += 7) {
+          const chunk = data.slice(i, i + 7);
+          const wNum = Math.floor(i / 7) + 1;
+          const avgContributors = Math.round(chunk.reduce((s, r) => s + r.active, 0) / chunk.length);
+          const sumJoined = chunk.reduce((s, r) => s + r.joined, 0);
+          weeks.push({
+            label: `${t.weekPrefix}${wNum}`,
+            avgContributors,
+            sumJoined
+          });
+        }
+
+        weeklyChartInstance = new Chart(weeklyCtx, {
+          type: 'line',
+          data: {
+            labels: weeks.map(w => w.label),
+            datasets: [
+              {
+                label: t.colActive,
+                data: weeks.map(w => w.avgContributors),
+                borderColor: '#14b8a6',
+                backgroundColor: 'rgba(20, 184, 166, 0.15)',
+                borderWidth: 2.5,
+                fill: true,
+                tension: 0.35,
+                pointRadius: 4
+              },
+              {
+                label: t.colJoined,
+                data: weeks.map(w => w.sumJoined),
+                borderColor: '#f59e0b',
+                backgroundColor: '#f59e0b',
+                borderWidth: 2,
+                tension: 0.35,
+                pointRadius: 4
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'top',
+                labels: { color: tickColor, boxWidth: 12, font: { size: 11 } }
+              }
+            },
+            scales: {
+              x: { grid: { display: false }, ticks: { color: tickColor, font: { size: 11 } } },
+              y: { grid: { color: gridColor }, ticks: { color: tickColor, font: { size: 11 } } }
+            }
+          }
+        });
+      }
+    }
+
+    /**
+     * Sort Spreadsheet Ledger Table by column key
+     */
+    function sortTable(key) {
+      if (sortState.key === key) {
+        sortState.asc = !sortState.asc;
+      } else {
+        sortState.key = key;
+        sortState.asc = false;
+      }
+      renderTable();
+    }
+
+    /**
+     * Render Spreadsheet Ledger Rows with search & sorting
+     */
+    function renderTable() {
+      const tbody = document.getElementById('data-table-body');
+      const countEl = document.getElementById('table-row-count');
+      if (!tbody) return;
+
+      const t = I18N[currentLang];
+      const baseData = getFilteredData();
+      const query = (document.getElementById('table-search')?.value || '').trim().toLowerCase();
+
+      const filtered = baseData.filter(row => {
+        if (!query) return true;
+        const dayIdx = getDayIndex(row.date);
+        const daySi = I18N.si.daysOfWeek[dayIdx].toLowerCase();
+        const dayTa = I18N.ta.daysOfWeek[dayIdx].toLowerCase();
+        const dayEn = I18N.en.daysOfWeek[dayIdx].toLowerCase();
+        return (
+          row.date.toLowerCase().includes(query) ||
+          daySi.includes(query) ||
+          dayTa.includes(query) ||
+          dayEn.includes(query)
+        );
+      });
+
+      filtered.sort((a, b) => {
+        const valA = a[sortState.key];
+        const valB = b[sortState.key];
+        if (typeof valA === 'string') {
+          return sortState.asc ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        }
+        return sortState.asc ? valA - valB : valB - valA;
+      });
+
+      tbody.innerHTML = filtered
+        .map(row => {
+          const dayName = t.daysOfWeek[getDayIndex(row.date)];
+          const isSurge = row.viewed >= 30000;
+          return `
+            <tr class="hover:bg-emerald-50/50 dark:hover:bg-slate-800/60 transition-colors">
+              <td class="px-3.5 py-2.5 font-semibold text-slate-900 dark:text-slate-100 whitespace-nowrap">${row.date}</td>
+              <td class="px-3 py-2.5 text-slate-600 dark:text-slate-300 whitespace-nowrap">${dayName}</td>
+              <td class="px-3.5 py-2.5 text-right text-slate-700 dark:text-slate-200">${fmtNum(row.posts)}</td>
+              <td class="px-3.5 py-2.5 text-right text-slate-700 dark:text-slate-200">${fmtNum(row.comments)}</td>
+              <td class="px-3.5 py-2.5 text-right font-semibold text-rose-600 dark:text-rose-400">${fmtNum(row.reactions)}</td>
+              <td class="px-3.5 py-2.5 text-right font-semibold text-teal-600 dark:text-teal-400">+${fmtNum(row.joined)}</td>
+              <td class="px-3.5 py-2.5 text-right text-slate-700 dark:text-slate-200">${fmtNum(row.active)}</td>
+              <td class="px-3.5 py-2.5 text-right font-bold ${isSurge ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-800 dark:text-slate-100'}">
+                ${fmtNum(row.viewed)}${isSurge ? ' 🚀' : ''}
+              </td>
+            </tr>
+          `;
+        })
+        .join('');
+
+      if (countEl) {
+        if (currentLang === 'si') {
+          countEl.textContent = `පෙන්වන පේළි ගණන: ${filtered.length} / ${baseData.length}`;
+        } else if (currentLang === 'ta') {
+          countEl.textContent = `காட்டப்படும் வரிசைகள்: ${filtered.length} / ${baseData.length}`;
+        } else {
+          countEl.textContent = `Showing ${filtered.length} of ${baseData.length} rows`;
+        }
+      }
+    }
+
+    /**
+     * Export current filtered dataset to downloadable CSV file
+     */
+    function exportCSV() {
+      const data = getFilteredData();
+      const t = I18N[currentLang];
+      const headers = ['Date', 'Posts', 'Comments', 'Reactions', 'Joined', 'Posted or Commented', 'Viewed'];
+      const rows = data.map(r => [r.date, r.posts, r.comments, r.reactions, r.joined, r.active, r.viewed].join(','));
+      const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows].join('\n');
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `Nattandiya_Group_Insights_${currentRange}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      showToast(t.toastCsv);
+    }
+
+    /**
+     * Handle dynamic multi-sheet Excel (.xlsx / .xls / .csv) file uploads
+     */
+    function handleExcelUpload(event) {
+      const file = event.target.files?.[0];
+      if (!file || typeof XLSX === 'undefined') return;
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const container = document.getElementById('custom-sheets-container');
+          if (container) {
+            container.innerHTML = '';
+            container.classList.remove('hidden');
+
+            workbook.SheetNames.forEach(sheetName => {
+              const sheet = workbook.Sheets[sheetName];
+              const jsonRows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+              if (!jsonRows.length) return;
+
+              // If sheet matches Daily Numbers schema, update activeDataset
+              if (
+                jsonRows[0].Date !== undefined &&
+                jsonRows[0].Posts !== undefined &&
+                jsonRows[0].Viewed !== undefined
+              ) {
+                const parsed = jsonRows
+                  .filter(r => r.Date)
+                  .map(r => ({
+                    date: String(r.Date).slice(0, 10),
+                    posts: Number(r.Posts) || 0,
+                    comments: Number(r.Comments) || 0,
+                    reactions: Number(r.Reactions) || 0,
+                    joined: Number(r.Joined) || 0,
+                    active: Number(r['Posted or Commented'] ?? r.Active) || 0,
+                    viewed: Number(r.Viewed) || 0
+                  }));
+                if (parsed.length) {
+                  activeDataset = parsed;
+                  refreshDashboard();
+                }
+              }
+
+              // Render preview card for every uploaded sheet tab
+              const cols = Object.keys(jsonRows[0]);
+              const card = document.createElement('div');
+              card.className = 'rounded-2xl bg-white dark:bg-slate-900 p-4 border border-emerald-200 dark:border-emerald-800 shadow-sm';
+              card.innerHTML = `
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-xs font-extrabold text-emerald-700 dark:text-emerald-300">📑 ${file.name} → ${sheetName} (${jsonRows.length} rows)</span>
+                </div>
+                <div class="overflow-x-auto max-h-48 rounded-lg border border-slate-200 dark:border-slate-800">
+                  <table class="min-w-full text-xs divide-y divide-slate-200 dark:divide-slate-800">
+                    <thead class="bg-slate-100 dark:bg-slate-800">
+                      <tr>${cols.map(c => `<th class="px-3 py-2 text-left font-bold">${c}</th>`).join('')}</tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                      ${jsonRows
+                        .slice(0, 10)
+                        .map(
+                          r =>
+                            `<tr>${cols
+                              .map(c => `<td class="px-3 py-1.5 whitespace-nowrap">${r[c]}</td>`)
+                              .join('')}</tr>`
+                        )
+                        .join('')}
+                    </tbody>
+                  </table>
+                </div>
+              `;
+              container.appendChild(card);
+            });
+          }
+
+          showToast(I18N[currentLang].toastXlsxLoaded);
+        } catch (err) {
+          console.error('Excel parse error:', err);
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    /**
+     * Master refresh function updating KPIs, Top Days, Charts, and Table
+     */
+    function refreshDashboard() {
+      const filtered = getFilteredData();
+      renderKPIs(filtered);
+      renderTopDays(filtered);
+      renderCharts(filtered);
+      renderTable();
+    }
+
+    // Initialize dashboard safely once DOM & Chart.js are loaded
+    window.addEventListener('DOMContentLoaded', () => {
+      setLanguage('si');
+    });
+  </script>
+</body>
+</html>
