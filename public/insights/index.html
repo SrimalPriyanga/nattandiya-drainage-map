@@ -409,32 +409,32 @@
          "All Tabs" keeps the entire single-page dashboard visible at once,
          while individual tab buttons highlight & focus specific sections.
     ====================================================================== -->
-    <nav id="tab-navigation" aria-label="Spreadsheet Tabs" class="bg-white dark:bg-slate-900 rounded-2xl p-2 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-      <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
-        <button type="button" onclick="selectTab('all')" data-tab="all" class="sheet-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm whitespace-nowrap flex items-center gap-1.5">
+    <nav id="tab-navigation" aria-label="Spreadsheet Tabs" class="bg-white dark:bg-slate-900 rounded-2xl p-2 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-2">
+      <div class="flex flex-wrap items-center gap-1.5 py-0.5 flex-1 min-w-0">
+        <button type="button" onclick="selectTab('all')" data-tab="all" class="sheet-tab-btn px-3 py-2 rounded-xl text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm flex items-center gap-1.5 text-left sm:whitespace-nowrap">
           <span>📊</span>
           <span data-i18n="tabAll">සියලුම පටිති (Single-Page View)</span>
         </button>
-        <button type="button" onclick="selectTab('daily')" data-tab="daily" class="sheet-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 whitespace-nowrap flex items-center gap-1.5">
+        <button type="button" onclick="selectTab('daily')" data-tab="daily" class="sheet-tab-btn px-3 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-1.5 text-left sm:whitespace-nowrap">
           <span>📅</span>
           <span data-i18n="tabDaily">Daily Numbers (දෛනික දත්ත)</span>
         </button>
-        <button type="button" onclick="selectTab('engagement')" data-tab="engagement" class="sheet-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 whitespace-nowrap flex items-center gap-1.5">
+        <button type="button" onclick="selectTab('engagement')" data-tab="engagement" class="sheet-tab-btn px-3 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-1.5 text-left sm:whitespace-nowrap">
           <span>🔥</span>
           <span data-i18n="tabEngagement">Engagement (පෝස්ට් / ප්‍රතිචාර)</span>
         </button>
-        <button type="button" onclick="selectTab('growth')" data-tab="growth" class="sheet-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 whitespace-nowrap flex items-center gap-1.5">
+        <button type="button" onclick="selectTab('growth')" data-tab="growth" class="sheet-tab-btn px-3 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-1.5 text-left sm:whitespace-nowrap">
           <span>📈</span>
           <span data-i18n="tabGrowth">Growth & Reach (වර්ධනය සහ ව්‍යාප්තිය)</span>
         </button>
-        <button type="button" onclick="selectTab('ledger')" data-tab="ledger" class="sheet-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 whitespace-nowrap flex items-center gap-1.5">
+        <button type="button" onclick="selectTab('ledger')" data-tab="ledger" class="sheet-tab-btn px-3 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-1.5 text-left sm:whitespace-nowrap">
           <span>📋</span>
           <span data-i18n="tabLedger">Data Ledger (සම්පූර්ණ වගුව)</span>
         </button>
       </div>
 
       <!-- Optional Workbook Uploader for Team Updates -->
-      <div class="flex items-center gap-2 px-1">
+      <div class="flex items-center justify-end lg:justify-start gap-2 px-1 shrink-0 pt-1 lg:pt-0 border-t lg:border-t-0 border-slate-100 dark:border-slate-800">
         <label for="xlsx-upload" class="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition whitespace-nowrap">
           <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
@@ -1132,8 +1132,8 @@
       document.querySelectorAll('.sheet-tab-btn').forEach(btn => {
         const isActive = btn.getAttribute('data-tab') === tab;
         btn.className = isActive
-          ? 'sheet-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm whitespace-nowrap flex items-center gap-1.5'
-          : 'sheet-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 whitespace-nowrap flex items-center gap-1.5';
+          ? 'sheet-tab-btn px-3 py-2 rounded-xl text-xs font-bold transition-all bg-emerald-600 text-white shadow-sm flex items-center gap-1.5 text-left sm:whitespace-nowrap'
+          : 'sheet-tab-btn px-3 py-2 rounded-xl text-xs font-bold transition-all text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-1.5 text-left sm:whitespace-nowrap';
       });
 
       const panels = ['daily', 'engagement', 'growth', 'ledger'];
